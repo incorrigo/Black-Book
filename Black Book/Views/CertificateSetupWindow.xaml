@@ -8,6 +8,9 @@
         WindowStyle="None"
         AllowsTransparency="True"
         ResizeMode="NoResize">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
     <Border BorderBrush="#333" BorderThickness="1" Padding="20">
         <Grid>
             <Grid.RowDefinitions>
