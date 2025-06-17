@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using BlackBook.Views;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,5 +22,13 @@ namespace Black_Book
         {
             InitializeComponent();
         }
+
+        private void Window_Loaded (object sender, RoutedEventArgs e) {
+            if (!File.Exists("usercert.pfx")) {
+                var setupWindow = new CertificateSetupWindow();
+                setupWindow.ShowDialog();
+            }
+        }
+
     }
 }
