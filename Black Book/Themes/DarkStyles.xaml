@@ -1,0 +1,128 @@
+﻿<!--
+    INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+    == 2025-06-18 == Wednesday
+    Themes/DarkStyles.xaml
+-->
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ── Palette ─────────────────────────────────────────────── -->
+    <Color x:Key="Bg1">#121212</Color>
+    <Color x:Key="Bg2">#1E1E1E</Color>
+    <Color x:Key="Bg3">#252525</Color>
+    <Color x:Key="Fg1">#FFFFFF</Color>
+    <Color x:Key="Fg2">#AAAAAA</Color>
+    <Color x:Key="Line">#555555</Color>
+    <Color x:Key="Accent">#FF1493</Color>
+
+    <SolidColorBrush x:Key="BrushBg1" Color="{StaticResource Bg1}"/>
+    <SolidColorBrush x:Key="BrushBg2" Color="{StaticResource Bg2}"/>
+    <SolidColorBrush x:Key="BrushBg3" Color="{StaticResource Bg3}"/>
+    <SolidColorBrush x:Key="BrushFg1" Color="{StaticResource Fg1}"/>
+    <SolidColorBrush x:Key="BrushFg2" Color="{StaticResource Fg2}"/>
+    <SolidColorBrush x:Key="BrushLine" Color="{StaticResource Line}"/>
+    <SolidColorBrush x:Key="BrushAccent" Color="{StaticResource Accent}"/>
+
+    <!-- ── Window ──────────────────────────────────────────────── -->
+    <Style TargetType="Window">
+        <Setter Property="Background" Value="{StaticResource BrushBg1}"/>
+    </Style>
+
+    <!-- ── TextBlock (default & hint) ──────────────────────────── -->
+    <Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource BrushFg1}"/>
+    </Style>
+
+    <Style x:Key="HintText" TargetType="TextBlock"
+           BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="Foreground" Value="{StaticResource BrushFg2}"/>
+    </Style>
+
+    <!-- ── TextBox / PasswordBox ───────────────────────────────── -->
+    <Style TargetType="TextBox">
+        <Setter Property="Background" Value="{StaticResource BrushBg2}"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushFg1}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushLine}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="6"/>
+    </Style>
+
+    <Style TargetType="PasswordBox"
+           BasedOn="{StaticResource {x:Type TextBox}}"/>
+
+    <!-- ── ComboBox (flat) ─────────────────────────────────────── -->
+<Style TargetType="ComboBox">
+    <Setter Property="Background" Value="{StaticResource BrushBg2}"/>
+    <Setter Property="Foreground" Value="{StaticResource BrushFg1}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource BrushLine}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="Padding" Value="6"/>
+</Style>
+    
+
+    <!-- ── Button (hover accent) ───────────────────────────────── -->
+    <Style TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource BrushBg3}"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushFg1}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushLine}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="6,4"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Box"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush"
+                                    Value="{StaticResource BrushAccent}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Box" Property="Background"
+                                    Value="{StaticResource BrushAccent}"/>
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource BrushBg1}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource BrushFg2}"/>
+                            <Setter TargetName="Box" Property="Background"
+                                    Value="{StaticResource BrushBg2}"/>
+                            <Setter TargetName="Box" Property="BorderBrush"
+                                    Value="{StaticResource BrushLine}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── ScrollBar (slim) ────────────────────────────────────── -->
+    <Style TargetType="ScrollBar">
+        <Setter Property="Background" Value="{StaticResource BrushBg2}"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushLine}"/>
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Track Name="PART_Track">
+                            <Track.Thumb>
+                                <Thumb Background="{StaticResource BrushLine}"
+                                       BorderThickness="0"/>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

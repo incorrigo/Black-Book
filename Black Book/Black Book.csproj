@@ -7,8 +7,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>favicon.png</ApplicationIcon>
-    <SignAssembly>True</SignAssembly>
+    <SignAssembly>False</SignAssembly>
     <AssemblyOriginatorKeyFile>D:\ROME0$\OneDrive\web-design\visual-studio\Black Book\Incorrigo_Syx_SCA_Digital_Software_Manufacturing.p7b</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
