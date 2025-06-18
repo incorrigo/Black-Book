@@ -48,10 +48,16 @@
         <Setter Property="Padding" Value="6"/>
     </Style>
 
-    <Style TargetType="PasswordBox"
-           BasedOn="{StaticResource {x:Type TextBox}}"/>
+	<Style TargetType="PasswordBox">
+		<Setter Property="Background" Value="{StaticResource BrushBg2}"/>
+		<Setter Property="Foreground" Value="{StaticResource BrushFg1}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource BrushLine}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Padding" Value="6"/>
+	</Style>
 
-    <!-- ── ComboBox (flat) ─────────────────────────────────────── -->
+
+	<!-- ── ComboBox (flat) ─────────────────────────────────────── -->
 <Style TargetType="ComboBox">
     <Setter Property="Background" Value="{StaticResource BrushBg2}"/>
     <Setter Property="Foreground" Value="{StaticResource BrushFg1}"/>
