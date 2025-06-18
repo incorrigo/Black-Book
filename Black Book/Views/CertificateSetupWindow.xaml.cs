@@ -1,7 +1,8 @@
-﻿using System.Linq;
+﻿using BlackBook.Models;
+using BlackBook.Security;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using BlackBook.Security;
 
 namespace BlackBook.Views;
 
@@ -81,4 +82,5 @@ public partial class CertificateSetupWindow : Window {
 
         return PasswordStrength.None;
     }
+
 }

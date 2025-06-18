@@ -148,6 +148,32 @@ public partial class CorrespondenceEntryWindow : Window {
         Close();
     }
 
+    private void ReplyToSelected_Click (object sender, RoutedEventArgs e) {
+        if (HistoryList.SelectedItem is not Interaction selected)
+            return;
+
+        var person = people.FirstOrDefault(p => p.Id == selected.PersonId);
+        var company = companies.FirstOrDefault(c => c.Id == selected.CompanyId);
+        var situation = situations.FirstOrDefault(s => s.Id == selected.SituationId);
+
+        if (person == null || company == null)
+            return;
+
+        // Autofill fields
+        PersonTextBox.Text = person.Name;
+        CompanyTextBox.Text = company.Name;
+        RelationshipComboBox.SelectedIndex = (int)person.Relationship;
+        DirectionComboBox.SelectedIndex = selected.Direction == InteractionDirection.Incoming
+            ? (int)InteractionDirection.Outgoing
+            : (int)InteractionDirection.Incoming;
+        InteractionTypeComboBox.SelectedIndex = (int)selected.Type;
+        SituationComboBox.Text = situation?.Title ?? "";
+
+        // Clear notes for new entry
+        NotesTextBox.Text = "";
+        SetFormReadonly(false);
+    }
+
     private void UpdatePlaceholder (TextBox box, TextBlock placeholder) {
         placeholder.Visibility = string.IsNullOrWhiteSpace(box.Text)
             ? Visibility.Visible
