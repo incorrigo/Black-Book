@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Black_Book
+namespace BlackBook
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
