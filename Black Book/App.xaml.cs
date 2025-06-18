@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace Black_Book
+namespace BlackBook
 {
     /// <summary>
     /// Interaction logic for App.xaml

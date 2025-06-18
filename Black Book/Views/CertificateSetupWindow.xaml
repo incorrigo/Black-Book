@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Setup Certificate"
         Height="260" Width="380"
-        Background="#121212"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -11,7 +10,7 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
-    <Border BorderBrush="#333" BorderThickness="1" Padding="20">
+    <Border BorderBrush="{StaticResource BrushLine}" BorderThickness="1" Padding="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -23,19 +22,19 @@
             <!-- Name input with Initials marker -->
             <Grid Grid.Row="0" Margin="0,0,0,10">
                 <TextBox x:Name="UserNameBox"
-                         Background="#1e1e1e"
-                         Foreground="White"
-                         BorderBrush="#555"
+                         Background="{StaticResource BrushBg2}"
+                         Foreground="{StaticResource BrushFg1}"
+                         BorderBrush="{StaticResource BrushLine}"
                          Padding="6"
                          TextChanged="UserNameBox_TextChanged"/>
                 <TextBlock x:Name="InitialsMarker"
-                           Foreground="#555"
+                           Foreground="{StaticResource BrushLine}"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            Margin="0,0,6,0"
                            FontSize="10"
                            IsHitTestVisible="False"/>
-                <TextBlock Foreground="#888"
+                <TextBlock Foreground="{StaticResource BrushFg2}"
                            Margin="8,0,0,0"
                            VerticalAlignment="Center"
                            IsHitTestVisible="False"
@@ -46,12 +45,12 @@
             <!-- Password input -->
             <Grid Grid.Row="1" Margin="0,0,0,5">
                 <PasswordBox x:Name="PasswordBox"
-                             Background="#1e1e1e"
-                             Foreground="White"
-                             BorderBrush="#555"
+                             Background="{StaticResource BrushBg2}"
+                             Foreground="{StaticResource BrushFg1}"
+                             BorderBrush="{StaticResource BrushLine}"
                              Padding="6"
                              PasswordChanged="PasswordBox_PasswordChanged"/>
-                <TextBlock Foreground="#888"
+                <TextBlock Foreground="{StaticResource BrushFg2}"
                            Margin="8,0,0,0"
                            VerticalAlignment="Center"
                            IsHitTestVisible="False"
@@ -64,24 +63,24 @@
                        Grid.Row="2"
                        Height="2"
                        RadiusX="1" RadiusY="1"
-                       Fill="#333"
+                       Fill="{StaticResource BrushLine}"
                        Margin="0,0,0,20"/>
 
             <!-- Buttons -->
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Cancel"
-                        Background="#252525"
-                        Foreground="White"
-                        BorderBrush="#444"
+                        Background="{StaticResource BrushBg3}"
+                        Foreground="{StaticResource BrushFg1}"
+                        BorderBrush="{StaticResource BrushLine}"
                         Padding="5,3"
                         Margin="0,0,5,0"
                         Click="Cancel_Click"
                         Cursor="Hand"/>
 
                 <Button Content="Create"
-                        Background="#252525"
-                        Foreground="White"
-                        BorderBrush="#444"
+                        Background="{StaticResource BrushBg3}"
+                        Foreground="{StaticResource BrushFg1}"
+                        BorderBrush="{StaticResource BrushLine}"
                         Padding="5,3"
                         Click="CreateKey_Click"
                         Cursor="Hand"/>
