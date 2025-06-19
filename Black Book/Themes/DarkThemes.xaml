@@ -3,7 +3,6 @@
     == 2025-06-18 == Wednesday
     Themes/DarkThemes.xaml
 -->
-
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -24,8 +23,8 @@
     <SolidColorBrush x:Key="BrushLine" Color="{StaticResource Line}"/>
     <SolidColorBrush x:Key="BrushAccent" Color="{StaticResource Accent}"/>
 
-    <!-- ── Window ──────────────────────────────────────────────── -->
-    <Style TargetType="Window">
+    <!-- ── Window (base colour only) ───────────────────────────── -->
+    <Style x:Key="BaseWindowStyle" TargetType="Window">
         <Setter Property="Background" Value="{StaticResource BrushBg1}"/>
     </Style>
 

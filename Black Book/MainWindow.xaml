@@ -1,10 +1,43 @@
 ﻿<Window x:Class="BlackBook.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BlackBook"
-        mc:Ignorable="d"
-        Title="MainWindow" Width="717" Height="423">
-    <Grid/>
+        Title="Black Book"
+        Width="500" Height="230"
+        ResizeMode="NoResize">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- strip logo -->
+        <Image Source="/Assets/logostrip.png"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center"
+           Opacity="0.85"/>
+
+        <!-- buttons -->
+        <StackPanel Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Margin="0,0,0,32">
+
+            <Button x:Name="CreateKeyBtn"
+            Content="Create Key"
+            Margin="0,0,16,0"
+            Click="CreateKey_Click"/>
+
+                <Button x:Name="OpenBookBtn"
+            Content="Open Book"
+            Margin="0,0,16,0"
+            Click="OpenBook_Click"/>
+
+                    <Button Content="Quit"
+            Click="Quit_Click"/>
+        </StackPanel>
+
+
+    </Grid>
+
 </Window>

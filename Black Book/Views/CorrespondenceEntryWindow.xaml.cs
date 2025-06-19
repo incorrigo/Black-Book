@@ -77,7 +77,6 @@ public partial class CorrespondenceEntryWindow : Window {
         DirectionComboBox.IsEnabled = !isReadonly;
         InteractionTypeComboBox.IsEnabled = !isReadonly;
         RelationshipComboBox.IsEnabled = !isReadonly;
-
         SaveButton.IsEnabled = !isReadonly;
     }
 

@@ -6,7 +6,11 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes/DarkThemes.xaml" />
+                <!-- 1️⃣  base colours / controls  (must come first) -->
+                <ResourceDictionary Source="/Themes/DarkThemes.xaml"/>
+
+                <!-- 2️⃣  chrome overlay (BasedOn needs the style above) -->
+                <ResourceDictionary Source="/Themes/SyxChrome.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
