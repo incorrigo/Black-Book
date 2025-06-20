@@ -14,7 +14,6 @@ public partial class App : Application {
             UIElement.MouseLeftButtonDownEvent,
             new MouseButtonEventHandler(SyxBarDrag));
 
-        new MainWindow().Show();
     }
 
     private static void SyxBarDrag (object sender, MouseButtonEventArgs e) {
