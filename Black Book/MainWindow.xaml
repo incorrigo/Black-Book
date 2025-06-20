@@ -3,9 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Black Book"
         Width="500" Height="230"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="{StaticResource BrushBg1}">
+    <!-- FORCE DARK BG -->
 
-    <Grid>
+    <Grid Background="{StaticResource BrushBg1}">
+        <!-- Redundant, but bulletproof -->
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
@@ -13,31 +16,28 @@
 
         <!-- strip logo -->
         <Image Source="/Assets/logostrip.png"
-           HorizontalAlignment="Center"
-           VerticalAlignment="Center"
-           Opacity="0.85"/>
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Opacity="0.85"/>
 
         <!-- buttons -->
         <StackPanel Orientation="Horizontal"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Margin="0,0,0,32">
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,32">
 
             <Button x:Name="CreateKeyBtn"
-            Content="Create Key"
-            Margin="0,0,16,0"
-            Click="CreateKey_Click"/>
+                    Content="Create Key"
+                    Margin="0,0,16,0"
+                    Click="CreateKey_Click"/>
 
-                <Button x:Name="OpenBookBtn"
-            Content="Open Book"
-            Margin="0,0,16,0"
-            Click="OpenBook_Click"/>
+            <Button x:Name="OpenBookBtn"
+                    Content="Open Book"
+                    Margin="0,0,16,0"
+                    Click="OpenBook_Click"/>
 
-                    <Button Content="Quit"
-            Click="Quit_Click"/>
+            <Button Content="Quit"
+                    Click="Quit_Click"/>
         </StackPanel>
-
-
     </Grid>
-
 </Window>
