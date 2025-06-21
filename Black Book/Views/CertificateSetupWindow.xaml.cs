@@ -1,9 +1,10 @@
-﻿using System;
+﻿using BlackBook.Security;
+using BlackBook.Storage;
+using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using BlackBook.Security;
-using BlackBook.Storage;
 
 namespace BlackBook.Views;
 
@@ -23,9 +24,9 @@ public partial class CertificateSetupWindow : Window {
 
         var certPassword = SecurityManager.CreateCertPassword(name, password);
         var cert = SecurityManager.GenerateCertificate(
-            commonName: name,
-            organization: "", organizationalUnit: "",
-            country: "", state: "", locality: "",
+            commonName: "Black Book: " + name,
+            organization: "Incorrigo Syx", organizationalUnit: "Digital Cryptographic Systems",
+            country: "GB", state: "ENGLAND", locality: "Lancashire",
             password: certPassword
         );
 
@@ -33,8 +34,32 @@ public partial class CertificateSetupWindow : Window {
         SecurityManager.ExportCertificate(cert, certPath, certPassword);
 
         MessageBox.Show("Certificate created successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
+
+        // Now Initialize the profile by creating a file
+        InitializeUserProfile(name, password);
+
         Close();
     }
+
+
+    public static void InitializeUserProfile (string userName, string password) {
+        // Determine the file path
+        string filePath = UserDirectoryManager.GetEncryptedDataPath(userName);
+
+        // Check if the file already exists
+        if (!File.Exists(filePath)) {
+            // If the file does not exist, create it
+            using (FileStream fs = new FileStream(filePath, FileMode.Create)) {
+                // Optionally, write some initial data to the file, such as an empty container
+                var emptyData = new byte[] { }; // Placeholder for data or an empty container
+                fs.Write(emptyData, 0, emptyData.Length);
+            }
+
+            // Inform the user that the profile has been created
+            MessageBox.Show("Profile created successfully. You can now add data to your profile.", "Profile Created", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
+
 
     private void Cancel_Click (object sender, RoutedEventArgs e) {
         Close();
