@@ -27,7 +27,8 @@ public partial class SituationManager : Window {
     }
 
     private void SaveSituations () {
-        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.CurrentUserName);
+        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.CurrentUserName, SessionManager.Certificate!);
+
     }
 
 

@@ -3,7 +3,9 @@ using BlackBook.Storage;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
@@ -115,9 +117,20 @@ public partial class CorrespondenceEntryWindow : Window {
 
         // Save encrypted container
         var path = UserDirectoryManager.GetEncryptedDataPath(SessionManager.CurrentUserName);
-        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.CurrentUserName);
 
+        // Initialize ECDiffieHellman object to create a new key pair
+        using (var ecdH = ECDiffieHellman.Create()) {
+            // Access the public key from the created ECDiffieHellman object
+            var publicKey = ecdH.PublicKey;
 
+            // If you want to get the raw public key bytes, use the ToByteArray() method
+            byte[] publicKeyBytes = publicKey.ToByteArray();
+
+            // Save the public key bytes to a file (for example, save it into a "public.key" file)
+            File.WriteAllBytes("public.key", publicKeyBytes);
+
+            // Additional logic to handle saving the private key securely, or other encryption needs can be added here
+        }
 
         MessageBox.Show("Correspondence saved successfully.", "Saved",
                         MessageBoxButton.OK, MessageBoxImage.Information);

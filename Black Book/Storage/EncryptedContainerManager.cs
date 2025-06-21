@@ -1,72 +1,74 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
-using BlackBook.Security;
 
 namespace BlackBook.Storage;
 
 public static class EncryptedContainerManager {
-
-    public static void SaveEncrypted (BlackBookContainer container, string userName) {
-        using var ecdh = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP521);
-        var otherPublic = ECDHKeyManager.LoadPublicKey(userName);
-        byte[] sharedSecret = ecdh.DeriveKeyMaterial(otherPublic);
+    public static void SaveEncrypted (BlackBookContainer container, string userName, X509Certificate2 cert) {
+        using var remotePublic = cert.GetECDiffieHellmanPublicKey()!;
+        using var ephemeral = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP521);
+        byte[] sharedSecret = new byte[32]; // AES-256 key size (32 bytes)
+        using (var rng = new RNGCryptoServiceProvider()) {
+            rng.GetBytes(sharedSecret); // Generate random bytes for the secret key
+        }
 
         using var aes = Aes.Create();
-        aes.Key = sharedSecret;
-        aes.GenerateIV();
+        aes.Key = sharedSecret; // Assign the generated secret key to AES
+        aes.GenerateIV(); // Generate the initialization vector (IV) as usual
 
-        var json = JsonSerializer.Serialize(container);
-        byte[] encryptedData;
+
+        string json = JsonSerializer.Serialize(container);
+        byte[] encrypted;
         using (var encryptor = aes.CreateEncryptor())
         using (var ms = new MemoryStream())
         using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
         using (var sw = new StreamWriter(cs)) {
             sw.Write(json);
-            sw.Close();
-            encryptedData = ms.ToArray();
+            sw.Flush();
+            cs.FlushFinalBlock();
+            encrypted = ms.ToArray();
         }
 
-        var filePath = UserDirectoryManager.GetEncryptedDataPath(userName);
-        using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        string path = UserDirectoryManager.GetEncryptedDataPath(userName);
+        using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
         using var bw = new BinaryWriter(fs);
 
-        byte[] ephemeralPubKey = ecdh.PublicKey.ToByteArray();
-        bw.Write(ephemeralPubKey.Length);
-        bw.Write(ephemeralPubKey);
+        byte[] ephPublic = ephemeral.PublicKey.ToByteArray();
+        bw.Write(ephPublic.Length);
+        bw.Write(ephPublic);
         bw.Write(aes.IV.Length);
         bw.Write(aes.IV);
-        bw.Write(encryptedData);
+        bw.Write(encrypted);
     }
 
-    public static BlackBookContainer LoadEncrypted (string userName) {
-        var filePath = UserDirectoryManager.GetEncryptedDataPath(userName);
-        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+    public static BlackBookContainer LoadEncrypted (string userName, X509Certificate2 cert) {
+        string path = UserDirectoryManager.GetEncryptedDataPath(userName);
+        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
         using var br = new BinaryReader(fs);
 
         int keyLen = br.ReadInt32();
-        byte[] pubKeyBytes = br.ReadBytes(keyLen);
-
+        byte[] ephPub = br.ReadBytes(keyLen);
         int ivLen = br.ReadInt32();
         byte[] iv = br.ReadBytes(ivLen);
+        byte[] cipher = br.ReadBytes((int)(fs.Length - fs.Position));
 
-        byte[] encrypted = br.ReadBytes((int)(fs.Length - fs.Position));
-
-        using var myECDH = ECDHKeyManager.LoadPrivateKey(userName);
-        var otherKey = ECDiffieHellmanCngPublicKey.FromByteArray(pubKeyBytes, CngKeyBlobFormat.EccPublicBlob);
-        byte[] sharedSecret = myECDH.DeriveKeyMaterial(otherKey);
+        using var priv = cert.GetECDiffieHellmanPrivateKey()!;
+        var other = ECDiffieHellmanCngPublicKey.FromByteArray(ephPub, CngKeyBlobFormat.EccPublicBlob);
+        byte[] sharedSecret = priv.DeriveKeyMaterial(other);
 
         using var aes = Aes.Create();
         aes.Key = sharedSecret;
         aes.IV = iv;
 
         using var decryptor = aes.CreateDecryptor();
-        using var ms = new MemoryStream(encrypted);
+        using var ms = new MemoryStream(cipher);
         using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
         using var sr = new StreamReader(cs);
-        var json = sr.ReadToEnd();
+        string json = sr.ReadToEnd();
 
-        return JsonSerializer.Deserialize<BlackBookContainer>(json);
+        return JsonSerializer.Deserialize<BlackBookContainer>(json)!;
     }
 }

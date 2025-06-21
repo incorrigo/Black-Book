@@ -29,17 +29,10 @@ public partial class CertificateSetupWindow : Window {
             password: certPassword
         );
 
-        var userDir = UserDirectoryManager.GetUserDirectory(name);
         var certPath = UserDirectoryManager.GetUserCertPath(name);
-        var dataPath = UserDirectoryManager.GetEncryptedDataPath(name);
-
         SecurityManager.ExportCertificate(cert, certPath, certPassword);
 
-        // Create empty container and save encrypted
-        var container = new BlackBookContainer();
-        EncryptedContainerManager.SaveEncrypted(container, name);
-
-        MessageBox.Show("Certificate and profile created successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show("Certificate created successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
         Close();
     }
 
