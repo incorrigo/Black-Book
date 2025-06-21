@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using BlackBook.Models;
 using BlackBook.Storage;
 
 namespace BlackBook.Views;
 
 public partial class CorrespondenceEntryWindow : Window {
-
     private List<Person> people;
     private List<Company> companies;
     private List<Situation> situations;
@@ -18,32 +16,17 @@ public partial class CorrespondenceEntryWindow : Window {
 
     public CorrespondenceEntryWindow () {
         InitializeComponent();
-        LoadData();
-        TimestampText.Text = DateTime.Now.ToString("yyyy-MM-dd [dddd] - HH:mm");
 
+        var data = SessionManager.Data!;
+        people = data.People;
+        companies = data.Companies;
+        situations = data.Situations;
+        interactions = data.Interactions;
+
+        TimestampText.Text = DateTime.Now.ToString("yyyy-MM-dd [dddd] - HH:mm");
         PersonTextBox.TextChanged += (_, _) => LoadInteractionHistory();
         HistoryList.SelectionChanged += HistoryList_SelectionChanged;
-
-        var people = DataStore.Load<Person>("people.json");
-        var allInteractions = DataStore.Load<Interaction>("interactions.json");
-        var matchName = PersonTextBox.Text.Trim();
-
-        var relevant = allInteractions
-            .Where(i => {
-                var p = people.FirstOrDefault(p => p.Id == i.PersonId);
-                return p != null && p.Name.Equals(matchName, StringComparison.OrdinalIgnoreCase);
-            })
-            .OrderByDescending(i => i.Timestamp)
-            .ToList();
-
-        HistoryList.ItemsSource = relevant;
-    }
-
-    private void LoadData () {
-        people = DataStore.Load<Person>("people.json");
-        companies = DataStore.Load<Company>("companies.json");
-        situations = DataStore.Load<Situation>("situations.json");
-        interactions = DataStore.Load<Interaction>("interactions.json");
+        LoadInteractionHistory();
     }
 
     private void LoadInteractionHistory () {
@@ -96,9 +79,7 @@ public partial class CorrespondenceEntryWindow : Window {
         SetFormReadonly(true);
     }
 
-    private void Cancel_Click (object sender, RoutedEventArgs e) {
-        Close();
-    }
+    private void Cancel_Click (object sender, RoutedEventArgs e) => Close();
 
     private void Save_Click (object sender, RoutedEventArgs e) {
         if (string.IsNullOrWhiteSpace(PersonTextBox.Text) ||
@@ -109,12 +90,16 @@ public partial class CorrespondenceEntryWindow : Window {
             return;
         }
 
-        var person = new Person {
-            Name = PersonTextBox.Text,
-            Relationship = (RelationshipType)RelationshipComboBox.SelectedIndex
-        };
+        var person = people.FirstOrDefault(p => p.Name.Equals(PersonTextBox.Text, StringComparison.OrdinalIgnoreCase))
+                  ?? new Person { Name = PersonTextBox.Text };
+        person.Relationship = (RelationshipType)RelationshipComboBox.SelectedIndex;
 
-        var company = new Company { Name = CompanyTextBox.Text };
+        var company = companies.FirstOrDefault(c => c.Name.Equals(CompanyTextBox.Text, StringComparison.OrdinalIgnoreCase))
+                   ?? new Company { Name = CompanyTextBox.Text };
+
+        if (!people.Contains(person)) people.Add(person);
+        if (!companies.Contains(company)) companies.Add(company);
+
         var interaction = new Interaction {
             PersonId = person.Id,
             CompanyId = company.Id,
@@ -124,21 +109,11 @@ public partial class CorrespondenceEntryWindow : Window {
             Timestamp = DateTime.UtcNow
         };
 
-        var people = DataStore.Load<Person>("people.json");
-        var companies = DataStore.Load<Company>("companies.json");
-        var interactions = DataStore.Load<Interaction>("interactions.json");
-
-        if (!people.Exists(p => p.Name.Equals(person.Name, StringComparison.OrdinalIgnoreCase)))
-            people.Add(person);
-
-        if (!companies.Exists(c => c.Name.Equals(company.Name, StringComparison.OrdinalIgnoreCase)))
-            companies.Add(company);
-
         interactions.Add(interaction);
 
-        DataStore.Save("people.json", people);
-        DataStore.Save("companies.json", companies);
-        DataStore.Save("interactions.json", interactions);
+        // Save encrypted container
+        var path = UserDirectoryManager.GetEncryptedDataPath(SessionManager.CurrentUserName);
+        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.Certificate!, path);
 
         MessageBox.Show("Correspondence saved successfully.", "Saved",
                         MessageBoxButton.OK, MessageBoxImage.Information);

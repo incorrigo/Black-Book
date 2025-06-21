@@ -1,8 +1,9 @@
-﻿using BlackBook.Models;
-using BlackBook.Security;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using BlackBook.Security;
+using BlackBook.Storage;
 
 namespace BlackBook.Views;
 
@@ -12,26 +13,33 @@ public partial class CertificateSetupWindow : Window {
     }
 
     private void CreateKey_Click (object sender, RoutedEventArgs e) {
-        if (string.IsNullOrWhiteSpace(UserNameBox.Text) || string.IsNullOrWhiteSpace(PasswordBox.Password)) {
+        var name = UserNameBox.Text.Trim();
+        var password = PasswordBox.Password;
+
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password)) {
             MessageBox.Show("Name and password can't be empty.");
             return;
         }
 
-        var certPassword = SecurityManager.CreateCertPassword(UserNameBox.Text, PasswordBox.Password);
-
+        var certPassword = SecurityManager.CreateCertPassword(name, password);
         var cert = SecurityManager.GenerateCertificate(
-            commonName: UserNameBox.Text,
-            organization: "",
-            organizationalUnit: "",
-            country: "",
-            state: "",
-            locality: "",
+            commonName: name,
+            organization: "", organizationalUnit: "",
+            country: "", state: "", locality: "",
             password: certPassword
         );
 
-        SecurityManager.ExportCertificate(cert, "usercert.pfx", certPassword);
+        var userDir = UserDirectoryManager.GetUserDirectory(name);
+        var certPath = UserDirectoryManager.GetUserCertPath(name);
+        var dataPath = UserDirectoryManager.GetEncryptedDataPath(name);
 
-        MessageBox.Show("Certificate created successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
+        SecurityManager.ExportCertificate(cert, certPath, certPassword);
+
+        // Create empty container and save encrypted
+        var container = new BlackBookContainer();
+        EncryptedContainerManager.SaveEncrypted(container, cert, dataPath);
+
+        MessageBox.Show("Certificate and profile created successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
         Close();
     }
 
@@ -41,7 +49,7 @@ public partial class CertificateSetupWindow : Window {
 
     private void UserNameBox_TextChanged (object sender, System.Windows.Controls.TextChangedEventArgs e) {
         var initials = new string(UserNameBox.Text
-            .Split(' ', System.StringSplitOptions.RemoveEmptyEntries)
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .Select(word => word[0])
             .ToArray())
             .ToUpper();
@@ -54,9 +62,9 @@ public partial class CertificateSetupWindow : Window {
         var strength = EvaluatePasswordStrength(password);
 
         PasswordStrengthIndicator.Fill = strength switch {
-            PasswordStrength.Weak => new SolidColorBrush(Color.FromRgb(120, 40, 40)),    // mild red
-            PasswordStrength.Medium => new SolidColorBrush(Color.FromRgb(128, 0, 128)),  // purple
-            PasswordStrength.Strong => new SolidColorBrush(Color.FromRgb(255, 20, 147)), // electric pink
+            PasswordStrength.Weak => new SolidColorBrush(Color.FromRgb(120, 40, 40)),
+            PasswordStrength.Medium => new SolidColorBrush(Color.FromRgb(128, 0, 128)),
+            PasswordStrength.Strong => new SolidColorBrush(Color.FromRgb(255, 20, 147)),
             _ => new SolidColorBrush(Color.FromRgb(51, 51, 51))
         };
     }
@@ -82,5 +90,4 @@ public partial class CertificateSetupWindow : Window {
 
         return PasswordStrength.None;
     }
-
 }

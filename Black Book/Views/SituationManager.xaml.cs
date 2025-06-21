@@ -16,18 +16,20 @@ public partial class SituationManager : Window {
         InitializeComponent();
         LoadSituations();
         StatusComboBox.ItemsSource = Enum.GetValues(typeof(SituationStatus));
-        StatusComboBox.SelectedIndex = 0;               // default AdHoc
+        StatusComboBox.SelectedIndex = 0;
     }
 
     /* ---------- data load/save ---------- */
 
     private void LoadSituations () {
-        _situations = DataStore.Load<Situation>("situations.json");
+        _situations = SessionManager.Data!.Situations;
         SituationList.ItemsSource = _situations;
     }
 
-    private void SaveSituations () =>
-        DataStore.Save("situations.json", _situations);
+    private void SaveSituations () {
+        var path = UserDirectoryManager.GetEncryptedDataPath(SessionManager.CurrentUserName);
+        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.Certificate!, path);
+    }
 
     /* ---------- UI helpers ---------- */
 
@@ -39,6 +41,7 @@ public partial class SituationManager : Window {
             StatusComboBox.SelectedIndex = 0;
             return;
         }
+
         TitleBox.Text = s.Title;
         DescriptionBox.Text = s.Description;
         StatusComboBox.SelectedItem = s.Status;
@@ -60,7 +63,7 @@ public partial class SituationManager : Window {
     private void Save_Click (object sender, RoutedEventArgs e) {
         if (!ValidateForm()) return;
 
-        if (_current == null) {             // create
+        if (_current == null) {
             _current = new Situation();
             _situations.Add(_current);
         }
@@ -68,6 +71,7 @@ public partial class SituationManager : Window {
         _current.Title = TitleBox.Text.Trim();
         _current.Description = DescriptionBox.Text.Trim();
         _current.Status = (SituationStatus)StatusComboBox.SelectedItem;
+
         if (_current.Status == SituationStatus.DoneWith && _current.Closed == null)
             _current.Closed = DateTime.UtcNow;
         if (_current.Status != SituationStatus.DoneWith)
@@ -78,6 +82,5 @@ public partial class SituationManager : Window {
         MessageBox.Show("Saved.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
-    private void Cancel_Click (object sender, RoutedEventArgs e) =>
-        Close();
+    private void Cancel_Click (object sender, RoutedEventArgs e) => Close();
 }
