@@ -5,37 +5,27 @@
         Width="500" Height="230"
         ResizeMode="NoResize"
         Background="{StaticResource BrushBg1}">
-    <!-- FORCE DARK BG -->
-
     <Grid Background="{StaticResource BrushBg1}">
-        <!-- Redundant, but bulletproof -->
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <!-- strip logo -->
         <Image Source="/Assets/logostrip.png"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Opacity="0.85"/>
-
-        <!-- buttons -->
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
                     Margin="0,0,0,32">
-
             <Button x:Name="CreateKeyBtn"
                     Content="Create Key"
                     Margin="0,0,16,0"
                     Click="CreateKey_Click"/>
-
             <Button x:Name="OpenBookBtn"
                     Content="Open Book"
                     Margin="0,0,16,0"
                     Click="OpenBook_Click"/>
-
             <Button Content="Quit"
                     Click="Quit_Click"/>
         </StackPanel>

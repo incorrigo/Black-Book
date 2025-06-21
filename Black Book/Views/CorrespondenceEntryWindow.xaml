@@ -6,21 +6,16 @@
         Title="Enter Correspondence"
         Height="450" Width="550"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
-
-    <!-- ───────── Resources ───────── -->
+        ResizeMode="NoResize"
+        Background="{StaticResource BrushBg1}">
     <Window.Resources>
         <conv:DirectionColorConverter    x:Key="DirectionColorConverter"/>
         <conv:RelationshipGlyphConverter x:Key="RelationshipGlyphConverter"/>
     </Window.Resources>
-
-    <!-- ───────── Chrome border ───────── -->
     <Border BorderBrush="{StaticResource BrushLine}"
             BorderThickness="1"
             Padding="20">
-
-        <!-- ───────── Layout grid ───────── -->
-        <Grid>
+        <Grid Background="{StaticResource BrushBg1}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <!-- Timestamp -->
@@ -125,7 +120,7 @@
                 <ComboBoxItem Content="Email"/>
                 <ComboBoxItem Content="Phone Call"/>
                 <ComboBoxItem Content="Text Message"/>
-                <ComboBoxItem Content="In‑Person Meeting"/>
+                <ComboBoxItem Content="In-Person Meeting"/>
                 <ComboBoxItem Content="Video Conference"/>
                 <ComboBoxItem Content="Postal Mail"/>
                 <ComboBoxItem Content="Social Media"/>
