@@ -41,14 +41,12 @@
         <TextBox x:Name="PersonTextBox"
                  Grid.Row="1"
                  Padding="6"
-                 Margin="0 0 0 10"
-                 TextChanged="PersonTextBox_TextChanged"/>
+                 Margin="0 0 0 10" />
 
         <TextBox x:Name="CompanyTextBox"
                  Grid.Row="2"
                  Padding="6"
-                 Margin="0 0 0 10"
-                 TextChanged="CompanyTextBox_TextChanged"/>
+                 Margin="0 0 0 10"/>
 
         <ComboBox x:Name="RelationshipComboBox"
                   Grid.Row="3"
@@ -99,8 +97,7 @@
                  AcceptsReturn="True"
                  TextWrapping="Wrap"
                  VerticalScrollBarVisibility="Auto"
-                 Margin="0 0 0 10"
-                 TextChanged="NotesTextBox_TextChanged"/>
+                 Margin="0 0 0 10"/>
 
         <Grid Grid.Row="8">
             <Grid.ColumnDefinitions>

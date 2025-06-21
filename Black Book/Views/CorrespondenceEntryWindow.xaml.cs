@@ -16,16 +16,13 @@ public partial class CorrespondenceEntryWindow : Window {
     private List<Situation> situations;
     private List<Interaction> interactions;
 
-
     public CorrespondenceEntryWindow () {
         InitializeComponent();
         LoadData();
         TimestampText.Text = DateTime.Now.ToString("yyyy-MM-dd [dddd] - HH:mm");
-        UpdatePlaceholders();
 
         PersonTextBox.TextChanged += (_, _) => LoadInteractionHistory();
         HistoryList.SelectionChanged += HistoryList_SelectionChanged;
-
 
         var people = DataStore.Load<Person>("people.json");
         var allInteractions = DataStore.Load<Interaction>("interactions.json");
@@ -40,7 +37,6 @@ public partial class CorrespondenceEntryWindow : Window {
             .ToList();
 
         HistoryList.ItemsSource = relevant;
-
     }
 
     private void LoadData () {
@@ -160,7 +156,6 @@ public partial class CorrespondenceEntryWindow : Window {
         if (person == null || company == null)
             return;
 
-        // Autofill fields
         PersonTextBox.Text = person.Name;
         CompanyTextBox.Text = company.Name;
         RelationshipComboBox.SelectedIndex = (int)person.Relationship;
@@ -170,33 +165,7 @@ public partial class CorrespondenceEntryWindow : Window {
         InteractionTypeComboBox.SelectedIndex = (int)selected.Type;
         SituationComboBox.Text = situation?.Title ?? "";
 
-        // Clear notes for new entry
         NotesTextBox.Text = "";
         SetFormReadonly(false);
-    }
-
-    private void UpdatePlaceholder (TextBox box, TextBlock placeholder) {
-        placeholder.Visibility = string.IsNullOrWhiteSpace(box.Text)
-            ? Visibility.Visible
-            : Visibility.Hidden;
-    }
-
-    private void PersonTextBox_TextChanged (object sender, TextChangedEventArgs e) {
-        UpdatePlaceholder(PersonTextBox, PersonPlaceholder);
-        LoadInteractionHistory();
-    }
-
-    private void CompanyTextBox_TextChanged (object sender, TextChangedEventArgs e) {
-        UpdatePlaceholder(CompanyTextBox, CompanyPlaceholder);
-    }
-
-    private void NotesTextBox_TextChanged (object sender, TextChangedEventArgs e) {
-        UpdatePlaceholder(NotesTextBox, NotesPlaceholder);
-    }
-
-    private void UpdatePlaceholders () {
-        UpdatePlaceholder(PersonTextBox, PersonPlaceholder);
-        UpdatePlaceholder(CompanyTextBox, CompanyPlaceholder);
-        UpdatePlaceholder(NotesTextBox, NotesPlaceholder);
     }
 }
