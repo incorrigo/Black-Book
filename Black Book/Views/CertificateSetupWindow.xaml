@@ -4,88 +4,53 @@
         Title="Setup Certificate"
         Height="260" Width="380"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
-        Background="{StaticResource BrushBg1}">
-    <!-- Explicit dark bg -->
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    </Window.Resources>
-    <Border BorderBrush="{StaticResource BrushLine}" BorderThickness="1" Padding="20">
-        <Grid Background="{StaticResource BrushBg1}">
-            <!-- Defensive, explicit -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <!-- ... rest of your code ... -->
-            <!-- Name input with Initials marker -->
-            <Grid Grid.Row="0" Margin="0,0,0,10">
-                <TextBox x:Name="UserNameBox"
-                         Background="{StaticResource BrushBg2}"
-                         Foreground="{StaticResource BrushFg1}"
-                         BorderBrush="{StaticResource BrushLine}"
-                         Padding="6"
-                         TextChanged="UserNameBox_TextChanged"/>
-                <TextBlock x:Name="InitialsMarker"
-                           Foreground="{StaticResource BrushLine}"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Margin="0,0,6,0"
-                           FontSize="10"
-                           IsHitTestVisible="False"/>
-                <TextBlock Foreground="{StaticResource BrushFg2}"
-                           Margin="8,0,0,0"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False"
-                           Text="Name"
-                           Visibility="{Binding Text.IsEmpty, ElementName=UserNameBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            </Grid>
+        ResizeMode="NoResize">
 
-            <!-- Password input -->
-            <Grid Grid.Row="1" Margin="0,0,0,5">
-                <PasswordBox x:Name="PasswordBox"
-                             Background="{StaticResource BrushBg2}"
-                             Foreground="{StaticResource BrushFg1}"
-                             BorderBrush="{StaticResource BrushLine}"
-                             Padding="6"
-                             PasswordChanged="PasswordBox_PasswordChanged"/>
-                <TextBlock Foreground="{StaticResource BrushFg2}"
-                           Margin="8,0,0,0"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False"
-                           Text="Password"
-                           Visibility="{Binding Password.IsEmpty, ElementName=PasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            </Grid>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <!-- Password strength indicator -->
-            <Rectangle x:Name="PasswordStrengthIndicator"
-                       Grid.Row="2"
-                       Height="2"
-                       RadiusX="1" RadiusY="1"
-                       Fill="{StaticResource BrushLine}"
-                       Margin="0,0,0,20"/>
-
-            <!-- Buttons -->
-            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Cancel"
-                        Background="{StaticResource BrushBg3}"
-                        Foreground="{StaticResource BrushFg1}"
-                        BorderBrush="{StaticResource BrushLine}"
-                        Padding="5,3"
-                        Margin="0,0,5,0"
-                        Click="Cancel_Click"
-                        Cursor="Hand"/>
-
-                <Button Content="Create"
-                        Background="{StaticResource BrushBg3}"
-                        Foreground="{StaticResource BrushFg1}"
-                        BorderBrush="{StaticResource BrushLine}"
-                        Padding="5,3"
-                        Click="CreateKey_Click"
-                        Cursor="Hand"/>
-            </StackPanel>
+        <!-- Name -->
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <TextBox x:Name="UserNameBox"
+                     Padding="6"
+                     TextChanged="UserNameBox_TextChanged"/>
+            <TextBlock x:Name="InitialsMarker"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Margin="0,0,6,0"
+                       FontSize="10"
+                       IsHitTestVisible="False"/>
         </Grid>
-    </Border>
+
+        <!-- Password -->
+        <Grid Grid.Row="1" Margin="0,0,0,5">
+            <PasswordBox x:Name="PasswordBox"
+                         Padding="6"
+                         PasswordChanged="PasswordBox_PasswordChanged"/>
+        </Grid>
+
+        <!-- Strength -->
+        <Rectangle x:Name="PasswordStrengthIndicator"
+                   Grid.Row="2"
+                   Height="2"
+                   RadiusX="1" RadiusY="1"
+                   Fill="Gray"
+                   Margin="0,0,0,20"/>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel"
+                    Padding="5,3"
+                    Margin="0,0,5,0"
+                    Click="Cancel_Click"/>
+            <Button Content="Create"
+                    Padding="5,3"
+                    Click="CreateKey_Click"/>
+        </StackPanel>
+    </Grid>
 </Window>

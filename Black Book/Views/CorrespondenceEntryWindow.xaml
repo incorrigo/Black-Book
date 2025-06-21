@@ -6,223 +6,150 @@
         Title="Enter Correspondence"
         Height="450" Width="550"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
-        Background="{StaticResource BrushBg1}">
-    <Window.Resources>
-        <conv:DirectionColorConverter    x:Key="DirectionColorConverter"/>
-        <conv:RelationshipGlyphConverter x:Key="RelationshipGlyphConverter"/>
-    </Window.Resources>
-    <Border BorderBrush="{StaticResource BrushLine}"
-            BorderThickness="1"
-            Padding="20">
-        <Grid Background="{StaticResource BrushBg1}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <!-- Timestamp -->
-                <RowDefinition Height="Auto"/>
-                <!-- Person -->
-                <RowDefinition Height="Auto"/>
-                <!-- Company -->
-                <RowDefinition Height="Auto"/>
-                <!-- Relationship -->
-                <RowDefinition Height="Auto"/>
-                <!-- Direction -->
-                <RowDefinition Height="Auto"/>
-                <!-- Interaction Type -->
-                <RowDefinition Height="Auto"/>
-                <!-- Situation -->
-                <RowDefinition Height="*"/>
-                <!-- Notes -->
-                <RowDefinition Height="Auto"/>
-                <!-- Buttons -->
-                <RowDefinition Height="200"/>
-                <!-- History -->
-            </Grid.RowDefinitions>
+        ResizeMode="NoResize">
 
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <!-- Timestamp -->
-            <TextBlock x:Name="TimestampText"
-                       Grid.Row="0"
-                       Text="2025-06-17 [Tuesday] - 21:34"
-                       Foreground="{StaticResource BrushFg2}"
-                       FontSize="12"
-                       HorizontalAlignment="Right"
-                       Margin="0 0 0 10"/>
-
+            <RowDefinition Height="Auto"/>
             <!-- Person -->
-            <Grid Grid.Row="1" Margin="0 0 0 10">
-                <TextBox x:Name="PersonTextBox"
-                         Background="{StaticResource BrushBg2}"
-                         Foreground="{StaticResource BrushFg1}"
-                         BorderBrush="{StaticResource BrushLine}"
-                         Padding="6"
-                         TextChanged="PersonTextBox_TextChanged"/>
-                <TextBlock x:Name="PersonPlaceholder"
-                           Text="Person Name"
-                           Style="{StaticResource HintText}"
-                           Margin="8 0 0 0"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False"/>
-            </Grid>
-
+            <RowDefinition Height="Auto"/>
             <!-- Company -->
-            <Grid Grid.Row="2" Margin="0 0 0 10">
-                <TextBox x:Name="CompanyTextBox"
-                         Background="{StaticResource BrushBg2}"
-                         Foreground="{StaticResource BrushFg1}"
-                         BorderBrush="{StaticResource BrushLine}"
-                         Padding="6"
-                         TextChanged="CompanyTextBox_TextChanged"/>
-                <TextBlock x:Name="CompanyPlaceholder"
-                           Text="Company Name"
-                           Style="{StaticResource HintText}"
-                           Margin="8 0 0 0"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False"/>
-            </Grid>
-
+            <RowDefinition Height="Auto"/>
             <!-- Relationship -->
-            <ComboBox x:Name="RelationshipComboBox"
-                      Grid.Row="3"
-                      Background="{StaticResource BrushBg2}"
-                      Foreground="{StaticResource BrushFg1}"
-                      BorderBrush="{StaticResource BrushLine}"
-                      Padding="6"
-                      Margin="0 0 0 10"
-                      SelectedIndex="0">
-                <ComboBoxItem Content="Unknown"/>
-                <ComboBoxItem Content="Friendly"/>
-                <ComboBoxItem Content="Neutral"/>
-                <ComboBoxItem Content="Adversarial"/>
-            </ComboBox>
-
+            <RowDefinition Height="Auto"/>
             <!-- Direction -->
-            <ComboBox x:Name="DirectionComboBox"
-                      Grid.Row="4"
-                      Background="{StaticResource BrushBg2}"
-                      Foreground="{StaticResource BrushFg1}"
-                      BorderBrush="{StaticResource BrushLine}"
-                      Padding="6"
-                      Margin="0 0 0 10"
-                      SelectedIndex="0">
-                <ComboBoxItem Content="Incoming"/>
-                <ComboBoxItem Content="Outgoing"/>
-            </ComboBox>
-
-            <!-- Interaction Type -->
-            <ComboBox x:Name="InteractionTypeComboBox"
-                      Grid.Row="5"
-                      Background="{StaticResource BrushBg2}"
-                      Foreground="{StaticResource BrushFg1}"
-                      BorderBrush="{StaticResource BrushLine}"
-                      Padding="6"
-                      Margin="0 0 0 10"
-                      SelectedIndex="0">
-                <ComboBoxItem Content="Email"/>
-                <ComboBoxItem Content="Phone Call"/>
-                <ComboBoxItem Content="Text Message"/>
-                <ComboBoxItem Content="In-Person Meeting"/>
-                <ComboBoxItem Content="Video Conference"/>
-                <ComboBoxItem Content="Postal Mail"/>
-                <ComboBoxItem Content="Social Media"/>
-                <ComboBoxItem Content="Other"/>
-            </ComboBox>
-
+            <RowDefinition Height="Auto"/>
+            <!-- Type -->
+            <RowDefinition Height="Auto"/>
             <!-- Situation -->
-            <Grid Grid.Row="6" Margin="0 0 0 10">
-                <ComboBox x:Name="SituationComboBox"
-                          Background="{StaticResource BrushBg2}"
-                          Foreground="{StaticResource BrushFg1}"
-                          BorderBrush="{StaticResource BrushLine}"
-                          Padding="6"
-                          IsEditable="True"
-                          IsTextSearchEnabled="False"
-                          Text="AdHoc"/>
-                <TextBlock Text="Situation"
-                           Style="{StaticResource HintText}"
-                           Margin="8 0 0 0"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False"/>
-            </Grid>
-
+            <RowDefinition Height="*"/>
             <!-- Notes -->
-            <Grid Grid.Row="7" Margin="0 0 0 10">
-                <TextBox x:Name="NotesTextBox"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         VerticalScrollBarVisibility="Auto"
-                         Background="{StaticResource BrushBg2}"
-                         Foreground="{StaticResource BrushFg1}"
-                         BorderBrush="{StaticResource BrushLine}"
-                         Padding="6"
-                         TextChanged="NotesTextBox_TextChanged"/>
-                <TextBlock x:Name="NotesPlaceholder"
-                           Text="Notes"
-                           Style="{StaticResource HintText}"
-                           Margin="8 8 0 0"
-                           VerticalAlignment="Top"
-                           IsHitTestVisible="False"/>
-            </Grid>
-
+            <RowDefinition Height="Auto"/>
             <!-- Buttons -->
-            <Grid Grid.Row="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Content="Cancel"
-                        Grid.Column="1"
-                        Width="80" Margin="0 0 5 0"
-                        Click="Cancel_Click"/>
-                <Button x:Name="SaveButton"
-                        Content="Save"
-                        Grid.Column="2"
-                        Width="80"
-                        Click="Save_Click"/>
-            </Grid>
-
+            <RowDefinition Height="200"/>
             <!-- History -->
-            <ListBox x:Name="HistoryList"
-                     Grid.Row="9"
-                     Background="{StaticResource BrushBg2}"
-                     Foreground="{StaticResource BrushFg1}"
-                     BorderBrush="{StaticResource BrushLine}"
-                     BorderThickness="1"
-                     FontSize="12"
-                     Padding="4"
-                     Margin="0 10 0 0">
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type models:Interaction}">
-                        <Grid Margin="0 2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
+        </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Column="0"
-                                       FontSize="12"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Text="{Binding Person.Relationship,
-                                              Converter={StaticResource RelationshipGlyphConverter}}"/>
+        <TextBlock x:Name="TimestampText"
+                   Grid.Row="0"
+                   FontSize="12"
+                   HorizontalAlignment="Right"
+                   Margin="0 0 0 10"/>
 
-                            <TextBlock Grid.Column="1"
-                                       Text="{Binding Notes}"
-                                       TextWrapping="Wrap"
-                                       Foreground="{StaticResource BrushFg1}"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <TextBox x:Name="PersonTextBox"
+                 Grid.Row="1"
+                 Padding="6"
+                 Margin="0 0 0 10"
+                 TextChanged="PersonTextBox_TextChanged"/>
 
-            <Button x:Name="ReplyButton"
-                    Content="Send Response"
-                    Width="140"
-                    HorizontalAlignment="Right"
-                    Margin="0 8 0 0"
-                    Grid.Row="9"
-                    Click="ReplyToSelected_Click"/>
+        <TextBox x:Name="CompanyTextBox"
+                 Grid.Row="2"
+                 Padding="6"
+                 Margin="0 0 0 10"
+                 TextChanged="CompanyTextBox_TextChanged"/>
+
+        <ComboBox x:Name="RelationshipComboBox"
+                  Grid.Row="3"
+                  Padding="6"
+                  Margin="0 0 0 10"
+                  SelectedIndex="0">
+            <ComboBoxItem Content="Unknown"/>
+            <ComboBoxItem Content="Friendly"/>
+            <ComboBoxItem Content="Neutral"/>
+            <ComboBoxItem Content="Adversarial"/>
+        </ComboBox>
+
+        <ComboBox x:Name="DirectionComboBox"
+                  Grid.Row="4"
+                  Padding="6"
+                  Margin="0 0 0 10"
+                  SelectedIndex="0">
+            <ComboBoxItem Content="Incoming"/>
+            <ComboBoxItem Content="Outgoing"/>
+        </ComboBox>
+
+        <ComboBox x:Name="InteractionTypeComboBox"
+                  Grid.Row="5"
+                  Padding="6"
+                  Margin="0 0 0 10"
+                  SelectedIndex="0">
+            <ComboBoxItem Content="Email"/>
+            <ComboBoxItem Content="Phone Call"/>
+            <ComboBoxItem Content="Text Message"/>
+            <ComboBoxItem Content="In-Person Meeting"/>
+            <ComboBoxItem Content="Video Conference"/>
+            <ComboBoxItem Content="Postal Mail"/>
+            <ComboBoxItem Content="Social Media"/>
+            <ComboBoxItem Content="Other"/>
+        </ComboBox>
+
+        <ComboBox x:Name="SituationComboBox"
+                  Grid.Row="6"
+                  Padding="6"
+                  Margin="0 0 0 10"
+                  IsEditable="True"
+                  IsTextSearchEnabled="False"
+                  Text="AdHoc"/>
+
+        <TextBox x:Name="NotesTextBox"
+                 Grid.Row="7"
+                 Padding="6"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 Margin="0 0 0 10"
+                 TextChanged="NotesTextBox_TextChanged"/>
+
+        <Grid Grid.Row="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Cancel"
+                    Grid.Column="1"
+                    Width="80" Margin="0 0 5 0"
+                    Click="Cancel_Click"/>
+            <Button x:Name="SaveButton"
+                    Content="Save"
+                    Grid.Column="2"
+                    Width="80"
+                    Click="Save_Click"/>
         </Grid>
-    </Border>
+
+        <ListBox x:Name="HistoryList"
+                 Grid.Row="9"
+                 FontSize="12"
+                 Padding="4"
+                 Margin="0 10 0 0">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:Interaction}">
+                    <Grid Margin="0 2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   FontSize="12"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding Person.Relationship, Converter={StaticResource RelationshipGlyphConverter}}"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Notes}"
+                                   TextWrapping="Wrap"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Button x:Name="ReplyButton"
+                Content="Send Response"
+                Width="140"
+                HorizontalAlignment="Right"
+                Margin="0 8 0 0"
+                Grid.Row="9"
+                Click="ReplyToSelected_Click"/>
+    </Grid>
 </Window>
