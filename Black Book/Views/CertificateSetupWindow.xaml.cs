@@ -37,7 +37,7 @@ public partial class CertificateSetupWindow : Window {
 
         // Create empty container and save encrypted
         var container = new BlackBookContainer();
-        EncryptedContainerManager.SaveEncrypted(container, cert, dataPath);
+        EncryptedContainerManager.SaveEncrypted(container, name);
 
         MessageBox.Show("Certificate and profile created successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
         Close();

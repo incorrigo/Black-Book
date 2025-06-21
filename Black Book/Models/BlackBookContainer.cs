@@ -8,4 +8,10 @@ public class BlackBookContainer {
     public List<Company> Companies { get; set; } = new();
     public List<Interaction> Interactions { get; set; } = new();
     public List<Situation> Situations { get; set; } = new();
+
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public DateTime LastOpened { get; set; } = DateTime.UtcNow;
+    public int AccessCount { get; set; } = 0;
+    public string Version { get; set; } = "1.0.0";
+
 }

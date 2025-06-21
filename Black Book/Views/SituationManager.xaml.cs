@@ -27,9 +27,9 @@ public partial class SituationManager : Window {
     }
 
     private void SaveSituations () {
-        var path = UserDirectoryManager.GetEncryptedDataPath(SessionManager.CurrentUserName);
-        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.Certificate!, path);
+        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.CurrentUserName);
     }
+
 
     /* ---------- UI helpers ---------- */
 

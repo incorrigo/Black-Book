@@ -32,6 +32,12 @@
 
                 <Button Content="Quit"
                         Click="Quit_Click"/>
+
+                <Button Content="Log Out"
+        Margin="0,0,0,0"
+        Width="80"
+        Click="Logout_Click"/>
+
             </StackPanel>
         </Grid>
     </DockPanel>

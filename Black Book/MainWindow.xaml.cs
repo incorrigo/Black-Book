@@ -19,6 +19,17 @@ public partial class MainWindow : Window {
         setup.ShowDialog();
     }
 
+    private void Logout_Click (object sender, RoutedEventArgs e) {
+        SessionManager.CurrentUserName = "";
+        SessionManager.Certificate = null;
+        SessionManager.Data = null;
+
+        var login = new Views.InitialLoginWindow();
+        login.Show();
+        Close();
+    }
+
+
     private void OpenBook_Click (object sender, RoutedEventArgs e) {
         var entry = new CorrespondenceEntryWindow();
         entry.Owner = this;

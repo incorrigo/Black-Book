@@ -25,6 +25,18 @@ public partial class InitialLoginWindow : Window {
         }
     }
 
+    private void CreateProfile_Click (object sender, RoutedEventArgs e) {
+        var setup = new CertificateSetupWindow();
+        setup.Owner = this;
+        setup.ShowDialog();
+
+        // Refresh profile list after creation
+        ProfileList.ItemsSource = Storage.ProfileSelector.GetAvailableProfiles();
+        if (ProfileList.Items.Count > 0)
+            ProfileList.SelectedIndex = ProfileList.Items.Count - 1;
+    }
+
+
     private void Cancel_Click (object sender, RoutedEventArgs e) {
         Close();
     }

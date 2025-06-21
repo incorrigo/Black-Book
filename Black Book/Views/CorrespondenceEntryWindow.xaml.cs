@@ -1,10 +1,12 @@
-﻿using System;
+﻿using BlackBook.Models;
+using BlackBook.Storage;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using BlackBook.Models;
-using BlackBook.Storage;
+using System.Xml.Linq;
 
 namespace BlackBook.Views;
 
@@ -113,7 +115,9 @@ public partial class CorrespondenceEntryWindow : Window {
 
         // Save encrypted container
         var path = UserDirectoryManager.GetEncryptedDataPath(SessionManager.CurrentUserName);
-        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.Certificate!, path);
+        EncryptedContainerManager.SaveEncrypted(SessionManager.Data!, SessionManager.CurrentUserName);
+
+
 
         MessageBox.Show("Correspondence saved successfully.", "Saved",
                         MessageBoxButton.OK, MessageBoxImage.Information);
