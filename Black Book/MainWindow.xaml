@@ -6,38 +6,21 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="{StaticResource BrushBg1}"
-        ResizeMode="NoResize">
+        Background="Transparent"
+        ResizeMode="NoResize"
+        Style="{StaticResource {x:Type Window}}">
+
+
 
     <!-- OUTER BORDER for Accent and rounding -->
-    <Border BorderBrush="{StaticResource BrushAccent}" BorderThickness="2" CornerRadius="12" Background="{StaticResource BrushBg1}">
+    <Border BorderBrush="{StaticResource BrushAccent}"
+            BorderThickness="2"
+            CornerRadius="12"
+            Background="{StaticResource BrushBg1}">
         <DockPanel LastChildFill="True">
 
-            <!-- Custom SyxBar titlebar -->
-            <Grid x:Name="SyxBar"
-                  Height="32"
-                  Background="{StaticResource BrushAccent}"
-                  DockPanel.Dock="Top"
-                  PreviewMouseLeftButtonDown="SyxBar_MouseLeftButtonDown">
-                <TextBlock Text="Black Book"
-                           VerticalAlignment="Center"
-                           Margin="12,0,0,0"
-                           Foreground="White"
-                           FontWeight="Bold"/>
-
-                <!-- Custom Close Button -->
-                <Button Content="✕"
-                        Width="28" Height="28"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Margin="0,2,8,0"
-                        Background="Transparent"
-                        Foreground="White"
-                        BorderThickness="0"
-                        FontSize="14"
-                        Cursor="Hand"
-                        Click="CloseBtn_Click"/>
-            </Grid>
+            <!-- SyxBar is now injected by SyxChrome.xaml style -->
+            <!-- You do not need to redefine it here -->
 
             <!-- Main content -->
             <Grid Background="{StaticResource BrushBg1}">

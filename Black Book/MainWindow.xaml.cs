@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace BlackBook;         // <‑‑ must match x:Class minus .MainWindow
 
@@ -13,9 +15,29 @@ public partial class MainWindow : Window {
         Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Keys");
 
     public MainWindow () {
+        this.WindowStyle = WindowStyle.None;
+        this.AllowsTransparency = true;
+        this.ResizeMode = ResizeMode.NoResize;
+        this.Background = Brushes.Transparent;
+
+
+        WindowInteropHelper helper = new(this);
+        int style = NativeMethods.GetWindowLong(helper.Handle, -16);
+        style &= ~0x00C00000; // WS_CAPTION
+        NativeMethods.SetWindowLong(helper.Handle, -16, style);
+
+
         InitializeComponent();
-        Loaded += (_, _) => RefreshButtons();
     }
+
+    internal static class NativeMethods {
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        internal static extern int GetWindowLong (IntPtr hWnd, int nIndex);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        internal static extern int SetWindowLong (IntPtr hWnd, int nIndex, int dwNewLong);
+    }
+
 
     private void SyxBar_MouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
         if (e.ClickCount == 2) {
