@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Microsoft.Win32;
+using System.Windows.Input;
 
 namespace BlackBook;         // <‑‑ must match x:Class minus .MainWindow
 
@@ -15,6 +16,23 @@ public partial class MainWindow : Window {
         InitializeComponent();
         Loaded += (_, _) => RefreshButtons();
     }
+
+    private void SyxBar_MouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
+        if (e.ClickCount == 2) {
+            // Optionally maximize/restore, if you want (not needed if NoResize)
+            // WindowState = WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        }
+        else if (e.LeftButton == MouseButtonState.Pressed) {
+            DragMove();
+            e.Handled = true;
+        }
+    }
+
+    // Custom close button handler
+    private void CloseBtn_Click (object sender, RoutedEventArgs e) {
+        this.Close();
+    }
+
 
     /* ---------- UI logic ---------- */
 

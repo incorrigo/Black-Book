@@ -28,4 +28,18 @@ public partial class App : Application {
         }
     }
 
+    public App () {
+        EventManager.RegisterClassHandler(typeof(Window),
+            Button.ClickEvent,
+            new RoutedEventHandler(SyxChrome_CloseBtn_Click));
+    }
+
+    public static void SyxChrome_CloseBtn_Click (object sender, RoutedEventArgs e) {
+        if (e.OriginalSource is Button btn && btn.Content?.ToString() == "✕") {
+            Window window = Window.GetWindow(btn);
+            if (window != null)
+                window.Close();
+        }
+    }
+
 }

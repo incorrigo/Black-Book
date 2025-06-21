@@ -22,10 +22,14 @@
     <SolidColorBrush x:Key="BrushAccent" Color="{StaticResource Accent}"/>
 
     <!-- Window (base) -->
+    <!-- Base window style: flat, square, dark -->
     <Style x:Key="BaseWindowStyle" TargetType="Window" BasedOn="{x:Null}">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="Background" Value="{StaticResource BrushBg1}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushAccent}"/>
+        <Setter Property="BorderThickness" Value="1"/>
     </Style>
+
 
     <!-- TextBlock (default & hint) -->
     <Style x:Key="{x:Type TextBlock}" TargetType="TextBlock" BasedOn="{x:Null}">

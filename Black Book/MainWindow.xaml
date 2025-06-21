@@ -1,33 +1,78 @@
 ﻿<Window x:Class="BlackBook.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Black Book"
+        Title="Black Book"
         Width="500" Height="230"
-        ResizeMode="NoResize"
-        Background="{StaticResource BrushBg1}">
-    <Grid Background="{StaticResource BrushBg1}">
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Image Source="/Assets/logostrip.png"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Opacity="0.85"/>
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    Margin="0,0,0,32">
-            <Button x:Name="CreateKeyBtn"
-                    Content="Create Key"
-                    Margin="0,0,16,0"
-                    Click="CreateKey_Click"/>
-            <Button x:Name="OpenBookBtn"
-                    Content="Open Book"
-                    Margin="0,0,16,0"
-                    Click="OpenBook_Click"/>
-            <Button Content="Quit"
-                    Click="Quit_Click"/>
-        </StackPanel>
-    </Grid>
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="{StaticResource BrushBg1}"
+        ResizeMode="NoResize">
+
+    <!-- OUTER BORDER for Accent and rounding -->
+    <Border BorderBrush="{StaticResource BrushAccent}" BorderThickness="2" CornerRadius="12" Background="{StaticResource BrushBg1}">
+        <DockPanel LastChildFill="True">
+
+            <!-- Custom SyxBar titlebar -->
+            <Grid x:Name="SyxBar"
+                  Height="32"
+                  Background="{StaticResource BrushAccent}"
+                  DockPanel.Dock="Top"
+                  PreviewMouseLeftButtonDown="SyxBar_MouseLeftButtonDown">
+                <TextBlock Text="Black Book"
+                           VerticalAlignment="Center"
+                           Margin="12,0,0,0"
+                           Foreground="White"
+                           FontWeight="Bold"/>
+
+                <!-- Custom Close Button -->
+                <Button Content="✕"
+                        Width="28" Height="28"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Margin="0,2,8,0"
+                        Background="Transparent"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontSize="14"
+                        Cursor="Hand"
+                        Click="CloseBtn_Click"/>
+            </Grid>
+
+            <!-- Main content -->
+            <Grid Background="{StaticResource BrushBg1}">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Logo -->
+                <Image Source="/Assets/logostrip.png"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Opacity="0.85"/>
+
+                <!-- Buttons -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,0,32"
+                            Grid.Row="1">
+
+                    <Button x:Name="CreateKeyBtn"
+                            Content="Create Key"
+                            Margin="0,0,16,0"
+                            Click="CreateKey_Click"/>
+
+                    <Button x:Name="OpenBookBtn"
+                            Content="Open Book"
+                            Margin="0,0,16,0"
+                            Click="OpenBook_Click"/>
+
+                    <Button Content="Quit"
+                            Click="Quit_Click"/>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
+    </Border>
 </Window>
