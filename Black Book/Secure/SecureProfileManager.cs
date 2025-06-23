@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlackBook.Storage;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -8,13 +9,68 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BlackBook.Security {
+namespace BlackBook.Security;
     /// <summary>
     /// Handles creation, encryption, decryption, and atomic storage 
     /// of profile key‐bundle (file.file) and data container (file).
     /// </summary>
     public static class SecureProfileManager {
         // === Public API ===
+
+    public static async Task SaveProfileAsync (
+        string userName,
+        string password,
+        BlackBookContainer data,
+        string usersRootDirectory,
+        CancellationToken ct = default) {
+        string composite = BuildCompositePassword(userName, password);
+        byte[] chachaKey = DeriveChaChaKey(composite);
+        string profileDir = Path.Combine(usersRootDirectory, userName);
+
+        // --- Unwrap existing key-bundle (file.file) ---
+        string keyBundlePath = Path.Combine(profileDir, "file.file");
+        byte[] wrappedPfx = await File.ReadAllBytesAsync(keyBundlePath, ct).ConfigureAwait(false);
+        byte[] pfxBytes;
+        try {
+            pfxBytes = ChaChaUnwrap(wrappedPfx, chachaKey);
+        }
+        catch (CryptographicException ex) {
+            throw new ProfileDecryptionException("Failed to authenticate key bundle.", ex);
+        }
+
+        try {
+            // --- Re-wrap key-bundle with new nonce/tag ---
+            byte[] newWrappedPfx = ChaChaWrap(pfxBytes, chachaKey);
+            await AtomicWriteAsync(keyBundlePath, newWrappedPfx, ct).ConfigureAwait(false);
+
+            // --- Load cert to derive data key via ECDH ---
+            using var cert = new X509Certificate2(
+                pfxBytes,
+                composite,
+                X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable
+            );
+            byte[] dataKey = DeriveDataKeyFromEcdh(cert);
+
+            try {
+                // --- Serialize & wrap JSON container ---
+                string json = JsonSerializer.Serialize(data);
+                byte[] plain = Encoding.UTF8.GetBytes(json);
+                byte[] wrappedData = ChaChaWrap(plain, dataKey);
+
+                string dataPath = Path.Combine(profileDir, "file");
+                await AtomicWriteAsync(dataPath, wrappedData, ct).ConfigureAwait(false);
+            }
+            finally {
+                CryptographicOperations.ZeroMemory(dataKey);
+            }
+        }
+        finally {
+            CryptographicOperations.ZeroMemory(pfxBytes);
+        }
+    }
+   
+
+
 
         /// <summary>Create and persist a new profile.</summary>
         public static async Task CreateProfileAsync (
@@ -217,8 +273,10 @@ private static byte[] DeriveDataKeyFromEcdh (X509Certificate2 cert) {
 
         // zero-out private EC params if you want (optional)
         // CryptographicOperations.ZeroMemory(ecParams.D);
-        return derived;
-    }
+            return derived;
+}
+
+
 
 
     private static async Task AtomicWriteAsync (string path, byte[] data, CancellationToken ct) {
@@ -245,4 +303,3 @@ private static byte[] DeriveDataKeyFromEcdh (X509Certificate2 cert) {
         public ProfileDecryptionException (string msg, Exception? inner = null)
             : base(msg, inner) { }
     }
-}

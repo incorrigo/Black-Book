@@ -1,26 +1,25 @@
-﻿using BlackBook.Models;
+﻿using BlackBook;
+using BlackBook.Models;
+using BlackBook.Security;
 using BlackBook.Storage;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Linq;
 
 namespace BlackBook.Views;
-
 public partial class CorrespondenceEntryWindow : Window {
-    private List<Person> people;
-    private List<Company> companies;
-    private List<Situation> situations;
-    private List<Interaction> interactions;
+    private readonly List<Person> people;
+    private readonly List<Company> companies;
+    private readonly List<Situation> situations;
+    private readonly List<Interaction> interactions;
 
     public CorrespondenceEntryWindow () {
         InitializeComponent();
-
         var data = SessionManager.Data!;
         people = data.People;
         companies = data.Companies;
@@ -34,18 +33,15 @@ public partial class CorrespondenceEntryWindow : Window {
     }
 
     private void LoadInteractionHistory () {
-        var matchName = PersonTextBox.Text.Trim();
-
-        if (string.IsNullOrWhiteSpace(matchName)) {
+        var name = PersonTextBox.Text.Trim();
+        if (string.IsNullOrWhiteSpace(name)) {
             HistoryList.ItemsSource = null;
             return;
         }
 
         var relevant = interactions
-            .Where(i => {
-                var p = people.FirstOrDefault(p => p.Id == i.PersonId);
-                return p != null && p.Name.Equals(matchName, StringComparison.OrdinalIgnoreCase);
-            })
+            .Where(i => people.Any(p => p.Id == i.PersonId
+                                      && p.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
             .OrderByDescending(i => i.Timestamp)
             .ToList();
 
@@ -64,7 +60,9 @@ public partial class CorrespondenceEntryWindow : Window {
     }
 
     private void HistoryList_SelectionChanged (object sender, SelectionChangedEventArgs e) {
-        if (HistoryList.SelectedItem is not Interaction selected) return;
+        if (HistoryList.SelectedItem is not Interaction selected) {
+            return;
+        }
 
         var person = people.FirstOrDefault(p => p.Id == selected.PersonId);
         var company = companies.FirstOrDefault(c => c.Id == selected.CompanyId);
@@ -76,30 +74,34 @@ public partial class CorrespondenceEntryWindow : Window {
         DirectionComboBox.SelectedIndex = (int)selected.Direction;
         InteractionTypeComboBox.SelectedIndex = (int)selected.Type;
         RelationshipComboBox.SelectedIndex = person is not null
-            ? (int)person.Relationship
-            : 0;
+                                              ? (int)person.Relationship
+                                              : 0;
         SituationComboBox.Text = situation?.Title ?? "";
 
         SetFormReadonly(true);
     }
 
-    private void Cancel_Click (object sender, RoutedEventArgs e) => Close();
+    private void Cancel_Click (object sender, RoutedEventArgs e) {
+        Close();
+    }
 
-    private void Save_Click (object sender, RoutedEventArgs e) {
-        if (string.IsNullOrWhiteSpace(PersonTextBox.Text) ||
-            string.IsNullOrWhiteSpace(CompanyTextBox.Text) ||
-            string.IsNullOrWhiteSpace(NotesTextBox.Text)) {
+    private async void Save_Click (object sender, RoutedEventArgs e) {
+        if (string.IsNullOrWhiteSpace(PersonTextBox.Text)
+         || string.IsNullOrWhiteSpace(CompanyTextBox.Text)
+         || string.IsNullOrWhiteSpace(NotesTextBox.Text)) {
             MessageBox.Show("Please fill out all required fields.", "Incomplete",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        var person = people.FirstOrDefault(p => p.Name.Equals(PersonTextBox.Text, StringComparison.OrdinalIgnoreCase))
+        var person = people
+            .FirstOrDefault(p => p.Name.Equals(PersonTextBox.Text, StringComparison.OrdinalIgnoreCase))
                   ?? new Person { Name = PersonTextBox.Text };
         person.Relationship = (RelationshipType)RelationshipComboBox.SelectedIndex;
 
-        var company = companies.FirstOrDefault(c => c.Name.Equals(CompanyTextBox.Text, StringComparison.OrdinalIgnoreCase))
-                   ?? new Company { Name = CompanyTextBox.Text };
+        var company = companies
+            .FirstOrDefault(c => c.Name.Equals(CompanyTextBox.Text, StringComparison.OrdinalIgnoreCase))
+                     ?? new Company { Name = CompanyTextBox.Text };
 
         if (!people.Contains(person)) people.Add(person);
         if (!companies.Contains(company)) companies.Add(company);
@@ -112,48 +114,46 @@ public partial class CorrespondenceEntryWindow : Window {
             Notes = NotesTextBox.Text,
             Timestamp = DateTime.UtcNow
         };
-
         interactions.Add(interaction);
 
-        // Save encrypted container
-        var path = UserDirectoryManager.GetEncryptedDataPath(SessionManager.CurrentUserName);
-
-        // Initialize ECDiffieHellman object to create a new key pair
-        using (var ecdH = ECDiffieHellman.Create()) {
-            // Access the public key from the created ECDiffieHellman object
-            var publicKey = ecdH.PublicKey;
-
-            // If you want to get the raw public key bytes, use the ToByteArray() method
-            byte[] publicKeyBytes = publicKey.ToByteArray();
-
-            // Save the public key bytes to a file (for example, save it into a "public.key" file)
-            File.WriteAllBytes("public.key", publicKeyBytes);
-
-            // Additional logic to handle saving the private key securely, or other encryption needs can be added here
+        // Persist both key-bundle and JSON container
+        try {
+            await SecureProfileManager.SaveProfileAsync(
+                SessionManager.CurrentUserName,
+                SessionManager.CurrentPassword,
+                SessionManager.Data!,
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users"),
+                CancellationToken.None
+            );
+            MessageBox.Show("Correspondence saved successfully.", "Saved",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+            Close();
         }
-
-        MessageBox.Show("Correspondence saved successfully.", "Saved",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-        Close();
+        catch (Exception ex) {
+            MessageBox.Show($"Failed to save data: {ex.Message}", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void ReplyToSelected_Click (object sender, RoutedEventArgs e) {
-        if (HistoryList.SelectedItem is not Interaction selected)
+        if (HistoryList.SelectedItem is not Interaction selected) {
             return;
+        }
 
         var person = people.FirstOrDefault(p => p.Id == selected.PersonId);
         var company = companies.FirstOrDefault(c => c.Id == selected.CompanyId);
         var situation = situations.FirstOrDefault(s => s.Id == selected.SituationId);
 
-        if (person == null || company == null)
+        if (person == null || company == null) {
             return;
+        }
 
         PersonTextBox.Text = person.Name;
         CompanyTextBox.Text = company.Name;
         RelationshipComboBox.SelectedIndex = (int)person.Relationship;
         DirectionComboBox.SelectedIndex = selected.Direction == InteractionDirection.Incoming
-            ? (int)InteractionDirection.Outgoing
-            : (int)InteractionDirection.Incoming;
+                                              ? (int)InteractionDirection.Outgoing
+                                              : (int)InteractionDirection.Incoming;
         InteractionTypeComboBox.SelectedIndex = (int)selected.Type;
         SituationComboBox.Text = situation?.Title ?? "";
 
@@ -161,3 +161,4 @@ public partial class CorrespondenceEntryWindow : Window {
         SetFormReadonly(false);
     }
 }
+
