@@ -22,7 +22,7 @@ public partial class CertificateSetupWindow : Window {
             return;
         }
 
-        var certPassword = SecurityManager.CreateCertPassword(name, password);
+        var certPassword = SecurityManager.CreatePfxPassword(name, password);
         var cert = SecurityManager.GenerateCertificate(
             commonName: "Black Book: " + name,
             organization: "Incorrigo Syx", organizationalUnit: "Digital Cryptographic Systems",

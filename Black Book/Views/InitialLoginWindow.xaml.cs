@@ -1,8 +1,11 @@
-﻿using BlackBook.Storage;
+﻿using BlackBook.Security;
+using BlackBook.Storage;
 using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Text.Json;
 using System.Windows;
 
 namespace BlackBook.Views {
@@ -58,35 +61,64 @@ namespace BlackBook.Views {
         }
 
 
-        // Event handler for Unlock button click
         private void Unlock_Click (object sender, RoutedEventArgs e) {
-            var selectedProfile = ProfileList.SelectedItem as string;
-            if (selectedProfile == null) {
-                MessageBox.Show("Please select a profile.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            var name = ProfileList.SelectedItem as string;
+            var password = PasswordInput.Password;
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password)) {
+                MessageBox.Show("Select profile and enter password.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            string password = PasswordInput.Password;
-
-            // Attempt to load the session using the selected profile and password
-            var success = SessionManager.LoadSession(selectedProfile, password);
-
-            if (success) {
-                MessageBox.Show("Login successful.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                // Proceed to the next window or part of the app
+            // 1️⃣ Load cert via literal composite
+            var pfxPwd = SecurityManager.CreatePfxPassword(name, password);
+            X509Certificate2 cert;
+            try {
+                cert = new X509Certificate2(
+                    UserDirectoryManager.GetUserCertPath(name),
+                    pfxPwd,
+                    X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet
+                );
             }
-            else {
-                MessageBox.Show("Incorrect password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            catch {
+                MessageBox.Show("Wrong certificate password.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            // 2️⃣ Load & decrypt JSON container
+            BlackBookContainer data;
+            try {
+                data = EncryptedContainerManager.LoadEncrypted(name, password);
+            }
+            catch {
+                MessageBox.Show("Failed to decrypt data file.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // 3️⃣ Success → stash in SessionManager & open MainWindow
+            SessionManager.CurrentUserName = name;
+            SessionManager.Certificate = cert;
+            SessionManager.Data = data;
+            SessionManager.Data.LastOpened = DateTime.UtcNow;
+            SessionManager.Data.AccessCount++;
+            EncryptedContainerManager.SaveEncrypted(data, name, password);
+
+            var main = new MainWindow();
+            main.Show();
+            this.Close();
         }
 
-        // "Create New Profile clicked"
         private void CreateProfile_Click (object sender, RoutedEventArgs e) {
-            // Transition directly to the CertificateSetupWindow
-            var certSetupWindow = new CertificateSetupWindow();
-            certSetupWindow.Show();
-            this.Close(); // Close the current window (InitialLoginWindow)
+            var setup = new CertificateSetupWindow();
+            setup.Owner = this;
+            setup.ShowDialog();
+
+            // After creation, reload the profile dropdown
+            LoadProfiles();
         }
+
 
 
 
