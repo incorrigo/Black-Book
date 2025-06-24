@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using System.IO;
 using System.Windows.Controls;
 using BlackBook.Models;
+using BlackBook.Security;
 using BlackBook.Storage;
 
 namespace BlackBook.Views;
-
 public partial class SituationManager : Window {
     private List<Situation> _situations = new();
     private Situation? _current;
@@ -19,54 +22,48 @@ public partial class SituationManager : Window {
         StatusComboBox.SelectedIndex = 0;
     }
 
-    /* ---------- data load/save ---------- */
-
     private void LoadSituations () {
         _situations = SessionManager.Data!.Situations;
         SituationList.ItemsSource = _situations;
     }
 
-    private void SaveSituations () {
-        // Before: passed SessionManager.Certificate
-        // Now: pass the string password instead
-        EncryptedContainerManager.SaveEncrypted(
-            SessionManager.Data!,
-            SessionManager.CurrentUserName,
-            SessionManager.CurrentPassword
-        );
-    }
-
-
-    /* ---------- UI helpers ---------- */
-
-    private void BindTo (Situation? s) {
-        _current = s;
-        if (s == null) {
-            TitleBox.Text = "";
-            DescriptionBox.Text = "";
-            StatusComboBox.SelectedIndex = 0;
-            return;
-        }
-
-        TitleBox.Text = s.Title;
-        DescriptionBox.Text = s.Description;
-        StatusComboBox.SelectedItem = s.Status;
-    }
-
     private bool ValidateForm () {
         if (string.IsNullOrWhiteSpace(TitleBox.Text)) {
-            MessageBox.Show("Title cannot be empty.", "Invalid", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Title cannot be empty.", "Invalid",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
         return true;
     }
 
-    /* ---------- event handlers ---------- */
+    private async Task SaveSituationsAsync () {
+        // Persist the entire container back to disk
+        await SecureProfileManager.SaveProfileAsync(
+            SessionManager.CurrentUserName,
+            SessionManager.CurrentPassword,
+            SessionManager.Data!,
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users"),
+            CancellationToken.None
+        );
+    }
 
-    private void SituationList_SelectionChanged (object sender, SelectionChangedEventArgs e) =>
-        BindTo(SituationList.SelectedItem as Situation);
+    private void SituationList_SelectionChanged (object sender, SelectionChangedEventArgs e) {
+        var s = SituationList.SelectedItem as Situation;
+        if (s == null) {
+            TitleBox.Text = "";
+            DescriptionBox.Text = "";
+            StatusComboBox.SelectedIndex = 0;
+            _current = null;
+            return;
+        }
 
-    private void Save_Click (object sender, RoutedEventArgs e) {
+        _current = s;
+        TitleBox.Text = s.Title;
+        DescriptionBox.Text = s.Description;
+        StatusComboBox.SelectedItem = s.Status;
+    }
+
+    private async void Save_Click (object sender, RoutedEventArgs e) {
         if (!ValidateForm()) return;
 
         if (_current == null) {
@@ -76,16 +73,23 @@ public partial class SituationManager : Window {
 
         _current.Title = TitleBox.Text.Trim();
         _current.Description = DescriptionBox.Text.Trim();
-        _current.Status = (SituationStatus)StatusComboBox.SelectedItem;
+        _current.Status = (SituationStatus)StatusComboBox.SelectedItem!;
 
         if (_current.Status == SituationStatus.DoneWith && _current.Closed == null)
             _current.Closed = DateTime.UtcNow;
-        if (_current.Status != SituationStatus.DoneWith)
+        else if (_current.Status != SituationStatus.DoneWith)
             _current.Closed = null;
 
-        SaveSituations();
         SituationList.Items.Refresh();
-        MessageBox.Show("Saved.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
+
+        try {
+            await SaveSituationsAsync();
+            MessageBox.Show("Saved.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex) {
+            MessageBox.Show($"Failed to save situations: {ex.Message}", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void Cancel_Click (object sender, RoutedEventArgs e) => Close();

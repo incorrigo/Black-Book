@@ -15,102 +15,40 @@ namespace BlackBook.Security;
     /// of profile key‐bundle (file.file) and data container (file).
     /// </summary>
     public static class SecureProfileManager {
-        // === Public API ===
+    // === Public API ===
 
-    public static async Task SaveProfileAsync (
-        string userName,
-        string password,
-        BlackBookContainer data,
-        string usersRootDirectory,
-        CancellationToken ct = default) {
-        string composite = BuildCompositePassword(userName, password);
-        byte[] chachaKey = DeriveChaChaKey(composite);
-        string profileDir = Path.Combine(usersRootDirectory, userName);
+    public static async Task CreateProfileAsync (
+     string userName,
+     string password,
+     BlackBookContainer initialData,
+     string usersRootDirectory,
+     CancellationToken ct = default) {
+        var composite = BuildCompositePassword(userName, password);
+        var chachaKey = DeriveChaChaKey(composite);
 
-        // --- Unwrap existing key-bundle (file.file) ---
-        string keyBundlePath = Path.Combine(profileDir, "file.file");
-        byte[] wrappedPfx = await File.ReadAllBytesAsync(keyBundlePath, ct).ConfigureAwait(false);
-        byte[] pfxBytes;
+        // 1) Generate & wrap your PFX
+        using var cert = GenerateSelfSignedEcdhCertificate(userName, composite);
+        var pfxBytes = cert.Export(X509ContentType.Pkcs12, composite);
         try {
-            pfxBytes = ChaChaUnwrap(wrappedPfx, chachaKey);
+            var wrappedPfx = ChaChaWrap(pfxBytes, chachaKey);
+            await AtomicWriteAsync(Path.Combine(usersRootDirectory, userName, "file.file"), wrappedPfx, ct);
         }
-        catch (CryptographicException ex) {
-            throw new ProfileDecryptionException("Failed to authenticate key bundle.", ex);
-        }
+        finally { CryptographicOperations.ZeroMemory(pfxBytes); }
 
+        // 2) Derive data key and wrap initial JSON
+        var dataKey = DeriveDataKeyFromEcdh(cert);
         try {
-            // --- Re-wrap key-bundle with new nonce/tag ---
-            byte[] newWrappedPfx = ChaChaWrap(pfxBytes, chachaKey);
-            await AtomicWriteAsync(keyBundlePath, newWrappedPfx, ct).ConfigureAwait(false);
-
-            // --- Load cert to derive data key via ECDH ---
-            using var cert = new X509Certificate2(
-                pfxBytes,
-                composite,
-                X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable
-            );
-            byte[] dataKey = DeriveDataKeyFromEcdh(cert);
-
-            try {
-                // --- Serialize & wrap JSON container ---
-                string json = JsonSerializer.Serialize(data);
-                byte[] plain = Encoding.UTF8.GetBytes(json);
-                byte[] wrappedData = ChaChaWrap(plain, dataKey);
-
-                string dataPath = Path.Combine(profileDir, "file");
-                await AtomicWriteAsync(dataPath, wrappedData, ct).ConfigureAwait(false);
-            }
-            finally {
-                CryptographicOperations.ZeroMemory(dataKey);
-            }
+            var json = JsonSerializer.Serialize(initialData);
+            var plain = Encoding.UTF8.GetBytes(json);
+            var wrappedData = ChaChaWrap(plain, dataKey);
+            await AtomicWriteAsync(Path.Combine(usersRootDirectory, userName, "file"), wrappedData, ct);
         }
-        finally {
-            CryptographicOperations.ZeroMemory(pfxBytes);
-        }
+        finally { CryptographicOperations.ZeroMemory(dataKey); }
     }
+
+
+
    
-
-
-
-        /// <summary>Create and persist a new profile.</summary>
-        public static async Task CreateProfileAsync (
-            string userName,
-            string password,
-            BlackBook.Storage.BlackBookContainer initialData,
-            string usersRootDirectory,
-            CancellationToken ct = default) {
-            var composite = BuildCompositePassword(userName, password);
-            var chachaKey = DeriveChaChaKey(composite);
-
-            // 1) Generate ECDH cert
-            using var cert = GenerateSelfSignedEcdhCertificate(userName, composite);
-
-            // 2) Export & wrap PFX
-            byte[] pfxBytes = cert.Export(X509ContentType.Pkcs12, composite);
-            try {
-                byte[] wrappedPfx = ChaChaWrap(pfxBytes, chachaKey);
-                await AtomicWriteAsync(
-                    Path.Combine(usersRootDirectory, userName, "file.file"),
-                    wrappedPfx, ct);
-            }
-            finally {
-                CryptographicOperations.ZeroMemory(pfxBytes);
-            }
-
-            // 3) Derive data key from ECDH and encrypt JSON
-            byte[] dataKey = DeriveDataKeyFromEcdh(cert);
-            try {
-                string json = JsonSerializer.Serialize(initialData);
-                var plain = Encoding.UTF8.GetBytes(json);
-                byte[] wrappedData = ChaChaWrap(plain, dataKey);
-                await AtomicWriteAsync(
-                    Path.Combine(usersRootDirectory, userName, "file"),
-                    wrappedData, ct);
-            }
-            finally {
-                CryptographicOperations.ZeroMemory(dataKey);
-            }
-        }
 
         /// <summary>Load an existing profile, returning the container.</summary>
         public static async Task<BlackBook.Storage.BlackBookContainer> LoadProfileAsync (
@@ -201,7 +139,61 @@ namespace BlackBook.Security;
             return result;
         }
 
-        private static byte[] ChaChaUnwrap (byte[] wrapped, byte[] key) {
+    /// <summary>
+    /// Atomically updates both the encrypted key‐bundle (file.file)
+    /// and the JSON container (file).
+    /// </summary>
+    public static async Task SaveProfileAsync (
+        string userName,
+        string password,
+        BlackBookContainer data,
+        string usersRootDirectory,
+        CancellationToken ct = default) {
+        // 1) Read & unwrap the existing key‐bundle (file.file)
+        string profileDir = Path.Combine(usersRootDirectory, userName);
+        string keyBundle = Path.Combine(profileDir, "file.file");
+        byte[] wrappedPfx = await File.ReadAllBytesAsync(keyBundle, ct).ConfigureAwait(false);
+        byte[] compositeKey = DeriveChaChaKey(BuildCompositePassword(userName, password));
+        byte[] pfxBytes;
+        try {
+            pfxBytes = ChaChaUnwrap(wrappedPfx, compositeKey);
+        }
+        catch (CryptographicException ex) {
+            throw new InvalidDataException("Failed to authenticate key bundle.", ex);
+        }
+
+        try {
+            // 2) Re-wrap the PFX with a fresh nonce/tag
+            byte[] newWrappedPfx = ChaChaWrap(pfxBytes, compositeKey);
+            await AtomicWriteAsync(keyBundle, newWrappedPfx, ct).ConfigureAwait(false);
+
+            // 3) Load the cert and derive the data key
+            using var cert = new X509Certificate2(
+                pfxBytes,
+                BuildCompositePassword(userName, password),
+                X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable
+            );
+            byte[] dataKey = DeriveDataKeyFromEcdh(cert);
+
+            try {
+                // 4) Serialize & wrap your JSON container
+                string json = JsonSerializer.Serialize(data);
+                byte[] plain = Encoding.UTF8.GetBytes(json);
+                byte[] wrapped = ChaChaWrap(plain, dataKey);
+
+                string dataFile = Path.Combine(profileDir, "file");
+                await AtomicWriteAsync(dataFile, wrapped, ct).ConfigureAwait(false);
+            }
+            finally {
+                CryptographicOperations.ZeroMemory(dataKey);
+            }
+        }
+        finally {
+            CryptographicOperations.ZeroMemory(pfxBytes);
+        }
+    }
+
+    private static byte[] ChaChaUnwrap (byte[] wrapped, byte[] key) {
             if (wrapped.Length < 12 + 16)
                 throw new InvalidDataException("Wrapped blob is too short.");
 

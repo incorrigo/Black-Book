@@ -13,53 +13,33 @@ public partial class CertificateSetupWindow : Window {
         InitializeComponent();
     }
 
-    private void CreateKey_Click (object sender, RoutedEventArgs e) {
+    private async void CreateKey_Click (object sender, RoutedEventArgs e) {
         var name = UserNameBox.Text.Trim();
         var password = PasswordBox.Password;
-
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password)) {
             MessageBox.Show("Name and password can't be empty.");
             return;
         }
 
-        var certPassword = SecurityManager.CreatePfxPassword(name, password);
-        var cert = SecurityManager.GenerateCertificate(
-            commonName: "Black Book: " + name,
-            organization: "Incorrigo Syx", organizationalUnit: "Digital Cryptographic Systems",
-            country: "GB", state: "ENGLAND", locality: "Lancashire",
-            password: certPassword
-        );
+        // Create *everything* properly wrapped:
+        try {
+            await SecureProfileManager.CreateProfileAsync(
+                userName: name,
+                password: password,
+                initialData: new BlackBookContainer(),
+                usersRootDirectory: Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users"),
+                ct: CancellationToken.None
+            );
+        }
+        catch (Exception ex) {
+            MessageBox.Show($"Failed to initialize profile data:\n{ex.Message}",
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
 
-        var certPath = UserDirectoryManager.GetUserCertPath(name);
-        SecurityManager.ExportCertificate(cert, certPath, certPassword);
-
-        MessageBox.Show("Certificate created successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
-
-        // Now Initialize the profile by creating a file
-        InitializeUserProfile(name, password);
-
+        MessageBox.Show("Profile created successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
         Close();
     }
-
-
-    public static void InitializeUserProfile (string userName, string password) {
-        // Determine the file path
-        string filePath = UserDirectoryManager.GetEncryptedDataPath(userName);
-
-        // Check if the file already exists
-        if (!File.Exists(filePath)) {
-            // If the file does not exist, create it
-            using (FileStream fs = new FileStream(filePath, FileMode.Create)) {
-                // Optionally, write some initial data to the file, such as an empty container
-                var emptyData = new byte[] { }; // Placeholder for data or an empty container
-                fs.Write(emptyData, 0, emptyData.Length);
-            }
-
-            // Inform the user that the profile has been created
-            MessageBox.Show("Profile created successfully. You can now add data to your profile.", "Profile Created", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-    }
-
 
     private void Cancel_Click (object sender, RoutedEventArgs e) {
         Close();

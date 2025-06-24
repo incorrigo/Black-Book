@@ -89,33 +89,7 @@ public static class SecurityManager {
     }
 
 
-    // still in SecurityManager.cs
-    public static bool CreateProfile (string userName, string password) {
-        try {
-            // ── STEP 1: write the PKCS#12 ──
-            var pfxPwd = CreatePfxPassword(userName, password);
-            var cert = GenerateCertificate(
-                commonName: "Black Book: " + userName,
-                organization: "Incorrigo Syx",
-                organizationalUnit: "Digital Cryptographic Systems",
-                country: "GB", state: "England", locality: "Lancashire",
-                password: pfxPwd
-            );
-            var certPath = UserDirectoryManager.GetUserCertPath(userName);
-            ExportCertificate(cert, certPath, pfxPwd);
-
-            // ── STEP 2: write the empty data container ──
-            var container = new BlackBookContainer();
-            EncryptedContainerManager.SaveEncrypted(container, userName, password);
-
-            return true;
-        }
-        catch (Exception ex) {
-            MessageBox.Show($"Failed to create profile: {ex.Message}",
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            return false;
-        }
-    }
+   
 
 
 
