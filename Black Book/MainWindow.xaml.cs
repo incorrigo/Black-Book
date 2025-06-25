@@ -21,13 +21,14 @@ public partial class MainWindow : Window {
 
     private void Logout_Click (object sender, RoutedEventArgs e) {
         SessionManager.CurrentUserName = "";
-        SessionManager.Certificate = null;
+        SessionManager.CurrentPassword = "";    // ← clear password if you like
         SessionManager.Data = null;
 
-        var login = new Views.InitialLoginWindow();
+        var login = new InitialLoginWindow();
         login.Show();
         Close();
     }
+
 
 
     private void OpenBook_Click (object sender, RoutedEventArgs e) {
