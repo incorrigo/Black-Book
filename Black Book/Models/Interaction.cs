@@ -15,7 +15,8 @@ public class Interaction {
 
 public enum InteractionDirection {
     Incoming,
-    Outgoing
+    Outgoing,
+    Mutual
 }
 
 public enum InteractionType {

@@ -88,11 +88,4 @@ public static class SecurityManager {
         return $"{userName}  {password}";
     }
 
-
-   
-
-
-
-
-
 }

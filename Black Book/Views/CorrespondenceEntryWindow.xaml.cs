@@ -4,6 +4,7 @@ using BlackBook.Security;
 using BlackBook.Storage;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -13,10 +14,10 @@ using System.Windows.Controls;
 
 namespace BlackBook.Views;
 public partial class CorrespondenceEntryWindow : Window {
-    private readonly List<Person> people;
-    private readonly List<Company> companies;
-    private readonly List<Situation> situations;
-    private readonly List<Interaction> interactions;
+    private readonly ObservableCollection<Person>           people;
+    private readonly ObservableCollection<Company>          companies;
+    private readonly ObservableCollection<Situation>        situations;
+    private readonly ObservableCollection<Interaction>      interactions;
 
     public CorrespondenceEntryWindow () {
         InitializeComponent();
