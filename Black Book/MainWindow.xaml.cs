@@ -1,57 +1,81 @@
-﻿/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
-// 2025‑06‑26 [Thursday]
-///
-// [BlackBook/MainWindow.xaml.cs]
-
-using BlackBook.Views;
-using System;
-using System.Threading.Tasks;
+﻿// MainWindow.xaml.cs
 using System.Windows;
+using BlackBook.Views;
+using BlackBook.Models;
 
-namespace BlackBook;
+namespace BlackBook.Views {
+    public partial class MainWindow : Window {
+        public MainWindow () {
+            InitializeComponent();
+            // Ensure the data context is set so embedded user controls receive the data context if needed
+            DataContext = SessionManager.Data;
+            // Optionally, set minimum window size for usability
+            this.MinWidth = 600;
+            this.MinHeight = 400;
+        }
 
-public partial class MainWindow : Window {
-    public MainWindow () {
-        InitializeComponent();
-        DataContext = SessionManager.Data;         // bind the entire profile container
-    }
-
-    #region File menu
-    private async void Logout_Click (object sender, RoutedEventArgs e) {
-        try {
-            await SessionManager.SaveAndClearAsync();
+        // File -> Close Profile (log out to initial screen, if desired)
+        private void CloseProfile_Click (object sender, RoutedEventArgs e) {
+            // Close the main window and perhaps reopen the login window
             new InitialLoginWindow().Show();
-            Close();
+            this.Close();
         }
-        catch (Exception ex) {
-            MessageBox.Show($"Logout failed:\n{ex.Message}", "Black Book",
-                            MessageBoxButton.OK, MessageBoxImage.Error);
+
+        // File -> Exit
+        private void Exit_Click (object sender, RoutedEventArgs e) {
+            Application.Current.Shutdown();
+        }
+
+        // New -> Person...
+        private async void NewPerson_Click (object sender, RoutedEventArgs e) {
+            var personWindow = new PersonEntryWindow();
+            personWindow.Owner = this;
+            bool? result = personWindow.ShowDialog();
+            if (result == true) {
+                // A new person was added. Select them in the People list.
+                var people = SessionManager.Data!.People;
+                if (people.Count > 0) {
+                    // Select the last person (assuming new added to end) and scroll into view
+                    PeopleManagerView.SelectPerson(people[^1]);
+                }
+            }
+        }
+
+        // New -> Company...
+        private async void NewCompany_Click (object sender, RoutedEventArgs e) {
+            var companyWindow = new CompanyEntryWindow();
+            companyWindow.Owner = this;
+            bool? result = companyWindow.ShowDialog();
+            if (result == true) {
+                // (Optional) If needed, we could handle any post-add action for companies.
+                // We might refresh any company lists or update PeopleManager if needed.
+            }
+        }
+
+        // New -> Situation...
+        private async void NewSituation_Click (object sender, RoutedEventArgs e) {
+            var situationWindow = new SituationEntryWindow();
+            situationWindow.Owner = this;
+            bool? result = situationWindow.ShowDialog();
+            if (result == true) {
+                // A new situation added. Select it in the Situations list.
+                var situations = SessionManager.Data!.Situations;
+                if (situations.Count > 0) {
+                    SituationManagerView.SelectSituation(situations[^1]);
+                }
+                // Also switch to the Situations tab to show the user the new situation
+                MainTabControl.SelectedIndex = 1; // Situations tab
+            }
+        }
+
+        // New -> Correspondence...
+        private async void NewInteraction_Click (object sender, RoutedEventArgs e) {
+            var interactionWindow = new CorrespondenceEntryWindow();
+            interactionWindow.Owner = this;
+            interactionWindow.ShowDialog();
+            // If saved, CorrespondenceEntryWindow already saves data and closes itself with a success message.
+            // We can decide to refresh or update UI if needed, but the data bindings auto-update from SessionManager.Data.
+            // Optionally, switch to Situations tab if a situation was involved, or to Contacts if relevant.
         }
     }
-    private void Exit_Click (object? s, RoutedEventArgs e) => Close();
-    #endregion
-
-    #region New‑entity shortcuts
-    private void NewPerson_Click (object? sender, RoutedEventArgs e) {
-        var dlg = new PersonEntryWindow { Owner = this };
-        dlg.ShowDialog();
-    }
-
-
-
-    private void NewSituation_Click (object? sender, RoutedEventArgs e) {
-        var host = new Window {
-            Title = "Black Book | New Situation",
-            Content = new SituationManager { Margin = new Thickness(12) },
-            SizeToContent = SizeToContent.WidthAndHeight,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            Owner = this
-        };
-        host.ShowDialog();
-    }
-
-
-    private void NewCorrespondence_Click (object? s, RoutedEventArgs e) =>
-        new CorrespondenceEntryWindow { Owner = this }.ShowDialog();
-    #endregion
 }

@@ -1,63 +1,32 @@
-﻿    using BlackBook.Security;
-    using BlackBook.Storage;
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.ConstrainedExecution;
-    using System.Security.Cryptography.X509Certificates;
-    using System.Text;
-    using System.Text.Json;
-    using System.Windows;
-    using System.Xml.Linq;
+﻿// InitialLoginWindow.xaml.cs
+using BlackBook.Security;
+using BlackBook.Storage;
+using System;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using System.Windows;
 
-    namespace BlackBook.Views;
-        public partial class InitialLoginWindow : Window {
-            public InitialLoginWindow () {
-                InitializeComponent();
-                LoadProfiles(); // Call the method to load the profiles
-            }
+namespace BlackBook.Views {
+    public partial class InitialLoginWindow : Window {
+        public InitialLoginWindow () {
+            InitializeComponent();
+            LoadProfiles();
+        }
 
-        // Method to load profiles into the ProfileList ComboBox
+        // Load available profiles into the ComboBox:
         private void LoadProfiles () {
             ProfileList.ItemsSource = Storage.ProfileSelector.GetAvailableProfiles();
         }
 
-
-
-    // Event handler for Cancel button click
-    private void Cancel_Click (object sender, RoutedEventArgs e) {
-                this.Close();
-            }
-
-            // Load the file, if it exists. Return what is loaded
-            public static BlackBookContainer LoadEncrypted (string userName, X509Certificate2 cert) {
-                string path = UserDirectoryManager.GetEncryptedDataPath(userName);
-
-                // Check if the file exists
-                if (!File.Exists(path)) {
-                    // Inform the user that the file does not exist
-                    MessageBox.Show("File not found", "Black Book", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return null;
-                }
-
-                // Proceed with reading the file
-                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-                    using (var br = new BinaryReader(fs)) {
-                        // Decrypt and load the container
-                        byte[] encryptedData = br.ReadBytes((int)fs.Length);
-                        // Additional decryption logic here...
-                    }
-                }
-
-                return new BlackBookContainer(); // Return the loaded data (or empty if not yet created)
-            }
-
+        private void Cancel_Click (object sender, RoutedEventArgs e) {
+            this.Close();
+        }
 
         private async void Unlock_Click (object sender, RoutedEventArgs e) {
             var name = ProfileList.SelectedItem as string;
             var password = PasswordInput.Password;
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password)) {
-                MessageBox.Show("Select profile and enter password.", "Error",
+                MessageBox.Show("Select a profile and enter the password.", "Incomplete",
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
@@ -73,24 +42,23 @@
             }
 
             if (!ok) {
-                MessageBox.Show("Wrong password.", "Error",
+                MessageBox.Show("Incorrect password. Please try again.", "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
+            // Open the main application window upon successful login
             new MainWindow().Show();
             this.Close();
         }
 
-
-
-
         private void CreateProfile_Click (object sender, RoutedEventArgs e) {
-                var setup = new CertificateSetupWindow();
-                setup.Owner = this;
-                setup.ShowDialog();
-
-                // After creation, reload the profile dropdown
-                LoadProfiles();
-            }
+            // Open the profile creation dialog modally
+            var setup = new CertificateSetupWindow();
+            setup.Owner = this;
+            setup.ShowDialog();
+            // After creating a new profile, refresh the profile list in case a new one was added
+            LoadProfiles();
         }
+    }
+}

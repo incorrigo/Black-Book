@@ -2,7 +2,7 @@
 
 namespace BlackBook.Models;
 
-public class Interaction {
+public partial class Interaction {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string PersonId { get; set; }
     public string CompanyId { get; set; }

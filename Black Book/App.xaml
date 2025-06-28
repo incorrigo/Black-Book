@@ -13,6 +13,8 @@
         <SolidColorBrush x:Key="AccentBrush" Color="#FF0FA3FF" />
         <converters:DirectionColorConverter  x:Key="DirectionColorConverter" />
         <converters:RelationshipGlyphConverter x:Key="RelationshipGlyphConverter" />
+        <converters:CompanyNameConverter x:Key="CompanyNameConverter"/>
+        <converters:PersonNameConverter  x:Key="PersonNameConverter"/>
         <converters:StatusBrushConverter x:Key="StatusBrushConverter" />
     </Application.Resources>
 
