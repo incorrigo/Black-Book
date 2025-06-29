@@ -2,15 +2,11 @@
 <UserControl x:Class="BlackBook.Views.CompanyManager"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:models="clr-namespace:BlackBook.Models"
              xmlns:conv="clr-namespace:BlackBook.Converters"
              MinWidth="300">
 
     <UserControl.Resources>
-        <conv:PersonNameConverter             x:Key="PersonNameConverter"/>
-        <conv:DirectionColorConverter         x:Key="DirectionColorConverter"/>
-        <conv:InteractionPartiesConverter     x:Key="InteractionPartiesConverter"/>
-        <conv:InteractionTypeFriendlyConverter x:Key="InteractionTypeFriendlyConverter"/>
+        <conv:PersonNameConverter x:Key="PersonNameConverter"/>
     </UserControl.Resources>
 
     <Grid Margin="8">
@@ -19,59 +15,63 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- MASTER LIST -->
         <ListView x:Name="CompanyList"
-                  Grid.Column="0"
-                  ItemsSource="{Binding Companies}"
-                  SelectedIndex="0"
-                  MouseDoubleClick="CompanyList_MouseDoubleClick"
-                  Margin="0,0,8,0">
-
+              Grid.Column="0"
+              ItemsSource="{Binding Companies}"
+              SelectedIndex="0"
+              Margin="0,0,8,0"
+              MouseDoubleClick="CompanyList_MouseDoubleClick">
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Edit Company"        Click="EditCompany_Click"/>
-                    <MenuItem Header="Delete Company"      Click="DeleteCompany_Click"/>
+                    <MenuItem Header="Edit Company"   Click="EditCompany_Click"/>
+                    <MenuItem Header="Delete Company" Click="DeleteCompany_Click"/>
                     <Separator/>
-                    <MenuItem Header="Add Person…"         Click="AddPerson_Click"/>
+                    <MenuItem Header="Add Person…"     Click="AddPerson_Click"/>
                     <MenuItem Header="Add Correspondence…" Click="AddCorrespondence_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>
 
-            <!-- flat item template instead of GridView -->
-            <ListView.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:Company}">
-                    <Grid Margin="0 1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="80"/>
-                        </Grid.ColumnDefinitions>
+            <ListView.View>
+                <GridView>
+                    <!-- Company Name -->
+                    <GridViewColumn Header="Company"
+                          Width="200"
+                          DisplayMemberBinding="{Binding Name}">
+                        <GridViewColumn.HeaderContainerStyle>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            </Style>
+                        </GridViewColumn.HeaderContainerStyle>
+                    </GridViewColumn>
 
-                        <TextBlock Text="{Binding Name}"
-                                   FontWeight="SemiBold"
-                                   VerticalAlignment="Center"/>
+                    <!-- Contacts Count -->
+                    <GridViewColumn Header="Contacts"
+                          Width="60">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding People.Count}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                        <TextBlock Grid.Column="1"
-                                   Text="{Binding People.Count}"
-                                   HorizontalAlignment="Center"
-                                   Foreground="Gray"
-                                   VerticalAlignment="Center"/>
-
-                        <TextBlock Grid.Column="2"
-                                   Text="{Binding Interactions.Count}"
-                                   HorizontalAlignment="Center"
-                                   Foreground="Gray"
-                                   VerticalAlignment="Center"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+                    <!-- Interactions Count -->
+                    <GridViewColumn Header="Interactions"
+                          Width="80">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Interactions.Count}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
         </ListView>
 
-        <!-- DETAILS PANE -->
-        <Border Grid.Column="1"
-                Padding="12"
-                BorderThickness="1"
-                BorderBrush="#AAA">
+        <Border Grid.Column="1" Padding="12" BorderBrush="#AAA" BorderThickness="1">
 
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
