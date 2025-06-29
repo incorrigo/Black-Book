@@ -143,7 +143,7 @@
                                 <StackPanel Margin="0 4 0 4">
                                     <TextBlock FontWeight="Bold"
                                                Text="{Binding Timestamp,
-                                                              StringFormat={}{0:yyyy-MM-dd [ddd] - HH:mm}}"/>
+                                                              StringFormat={}{0:yyyy-MM-dd [dddd] - HH:mm}}"/>
                                     <StackPanel Orientation="Horizontal"
                                                 Margin="0 0 0 2">
                                         <Ellipse Width="8"
@@ -156,9 +156,8 @@
                                                    FontWeight="SemiBold"/>
                                         <TextBlock Text=" – "
                                                    FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding PersonId,
-                                                                  Converter={StaticResource PersonNameConverter}}"
-                                                   FontStyle="Italic"/>
+                                        <TextBlock Text="{Binding Converter={StaticResource InteractionPartiesConverter}}"
+                                        FontStyle="Italic"/>
                                     </StackPanel>
                                     <TextBlock FontSize="10"
                                                Foreground="Gray"

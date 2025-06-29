@@ -112,6 +112,9 @@
                                 <TextBlock Text="{Binding Notes}"
                                            Width="160"
                                            TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding Converter={StaticResource InteractionPartiesConverter}}"
+           Width="160" TextTrimming="CharacterEllipsis"/>
+
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

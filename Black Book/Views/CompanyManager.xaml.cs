@@ -1,4 +1,4 @@
-﻿// CompanyManager.xaml.cs (new)
+﻿// CompanyManager.xaml.cs
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

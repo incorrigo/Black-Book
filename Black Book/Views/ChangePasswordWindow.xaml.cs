@@ -1,4 +1,4 @@
-﻿// ChangePasswordWindow.xaml.cs (new)
+﻿// ChangePasswordWindow.xaml.cs
 using System;
 using System.IO;
 using System.Linq;

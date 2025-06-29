@@ -17,6 +17,13 @@ namespace BlackBook.Models {
         [JsonIgnore]                           // ← add
         public Company? Company =>
             SessionManager.Data?.Companies.FirstOrDefault(c => c.Id == CompanyId);
+
+        [JsonIgnore]
+        public ObservableCollection<Interaction> Interactions =>
+            new(SessionManager.Data?.Interactions
+                    .Where(i => i.PersonId == Id)
+                    .OrderByDescending(i => i.Timestamp)
+                 ?? Enumerable.Empty<Interaction>());
     }
 
     /* ----------  Situation  ---------- */

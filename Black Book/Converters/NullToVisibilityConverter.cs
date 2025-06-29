@@ -1,4 +1,4 @@
-﻿// Converters/NullToVisibilityConverter.cs (new)
+﻿// Converters/NullToVisibilityConverter.cs
 using System;
 using System.Globalization;
 using System.Windows;

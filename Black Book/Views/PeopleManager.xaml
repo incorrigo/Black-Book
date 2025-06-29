@@ -1,12 +1,16 @@
-﻿<UserControl x:Class="BlackBook.Views.PeopleManager"
+﻿<!-- PeopleManager.xaml -->
+    <UserControl x:Class="BlackBook.Views.PeopleManager"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conv="clr-namespace:BlackBook.Converters"
              MinWidth="300">
 
+    <!-- converters local to this view -->
     <UserControl.Resources>
-        <conv:CompanyNameConverter     x:Key="CompanyNameConverter"/>
-        <conv:RelationshipGlyphConverter x:Key="RelationshipGlyphConverter"/>
+        <conv:CompanyNameConverter        x:Key="CompanyNameConverter"/>
+        <conv:RelationshipGlyphConverter  x:Key="RelationshipGlyphConverter"/>
+        <conv:DirectionColorConverter     x:Key="DirectionColorConverter"/>
+        <conv:InteractionPartiesConverter x:Key="InteractionPartiesConverter"/>
     </UserControl.Resources>
 
     <Grid Margin="8">
@@ -15,47 +19,45 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ❶ People list -->
+        <!-- ──────────────────────────────────────────────
+             LEFT‑HAND MASTER LIST
+        ─────────────────────────────────────────────── -->
         <ListView x:Name="PeopleList"
-          Grid.Column="0"
-          ItemsSource="{Binding People}"
-          SelectedIndex="0"
-          MouseDoubleClick="PeopleList_MouseDoubleClick"
-          Margin="0,0,8,0">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <!-- remove the whole <Setter Property="ContextMenu"> block -->
-                </Style>
-            </ListView.ItemContainerStyle>
+                  Grid.Column="0"
+                  ItemsSource="{Binding People}"
+                  SelectedIndex="0"
+                  Margin="0,0,8,0"
+                  MouseDoubleClick="PeopleList_MouseDoubleClick">
+
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Edit Person"
-                      Click="EditPerson_Click"/>
-                    <MenuItem Header="Delete Person"
-                      Click="DeletePerson_Click"/>
+                    <MenuItem Header="Edit Person"          Click="EditPerson_Click"/>
+                    <MenuItem Header="Delete Person"        Click="DeletePerson_Click"/>
                     <Separator/>
-                    <MenuItem Header="Add Correspondence…"
-                      Click="AddCorrespondence_Click"/>
+                    <MenuItem Header="Add Correspondence…" Click="AddCorrespondence_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>
-            <!-- 👉 again: no Click attribute on <GridView> -->
+
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="22">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock FontSize="14" HorizontalAlignment="Center"
-                                           Text="{Binding Relationship, Converter={StaticResource RelationshipGlyphConverter}}"/>
+                                <TextBlock HorizontalAlignment="Center" FontSize="14"
+                                           Text="{Binding Relationship,
+                                                          Converter={StaticResource RelationshipGlyphConverter}}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Name"     Width="135" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Name"     Width="140"
+                                    DisplayMemberBinding="{Binding Name}"/>
 
-                    <GridViewColumn Header="Company"  Width="110">
+                    <GridViewColumn Header="Company"  Width="120">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding CompanyId, Converter={StaticResource CompanyNameConverter}}"/>
+                                <TextBlock Text="{Binding CompanyId,
+                                                          Converter={StaticResource CompanyNameConverter}}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -63,7 +65,75 @@
             </ListView.View>
         </ListView>
 
-        <!-- ❷ Detail pane (unchanged) -->
-        <!-- … -->
+        <!-- ──────────────────────────────────────────────
+             RIGHT‑HAND DETAIL PANE
+        ─────────────────────────────────────────────── -->
+        <Border Grid.Column="1" Padding="12" BorderBrush="#AAA" BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+
+                    <!-- headline -->
+                    <TextBlock FontSize="20" FontWeight="Bold"
+                               Text="{Binding ElementName=PeopleList, Path=SelectedItem.Name}"/>
+                    <TextBlock FontSize="10" Foreground="Gray"
+                               Text="{Binding ElementName=PeopleList, Path=SelectedItem.Id}"/>
+
+                    <!-- meta information -->
+                    <TextBlock Margin="0 4 0 0">
+                        <Run Text="Company: "/>
+                        <Run Text="{Binding ElementName=PeopleList, Path=SelectedItem.CompanyId,
+                                            Converter={StaticResource CompanyNameConverter},
+                                            TargetNullValue='N/A'}"/>
+                    </TextBlock>
+
+                    <TextBlock Margin="0 2 0 0">
+                        <Run Text="Email: "/>
+                        <Run Text="{Binding ElementName=PeopleList, Path=SelectedItem.Email,
+                                            TargetNullValue='N/A'}"/>
+                    </TextBlock>
+
+                    <TextBlock Margin="0 2 0 0">
+                        <Run Text="Phone: "/>
+                        <Run Text="{Binding ElementName=PeopleList, Path=SelectedItem.PhoneNumber,
+                                            TargetNullValue='N/A'}"/>
+                    </TextBlock>
+
+                    <TextBlock Margin="0 2 0 0">
+                        <Run Text="Position: "/>
+                        <Run Text="{Binding ElementName=PeopleList, Path=SelectedItem.Position,
+                                            TargetNullValue='N/A'}"/>
+                    </TextBlock>
+
+                    <TextBlock Text="{Binding ElementName=PeopleList, Path=SelectedItem.Notes}"
+                               TextWrapping="Wrap" Margin="0 4 0 0"/>
+
+                    <!-- correspondence history -->
+                    <TextBlock Margin="0 10 0 4" FontStyle="Italic" Text="Recent Interactions:"/>
+                    <ListBox x:Name="InteractionList"
+                             ItemsSource="{Binding ElementName=PeopleList, Path=SelectedItem.Interactions}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0 4 0 4">
+                                    <TextBlock FontWeight="Bold"
+                                               Text="{Binding Timestamp,
+                                                              StringFormat={}{0:yyyy-MM-dd [ddd] - HH:mm}}"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+                                        <Ellipse Width="8" Height="8" Margin="0 0 6 0"
+                                                 VerticalAlignment="Center"
+                                                 Fill="{Binding Direction,
+                                                                Converter={StaticResource DirectionColorConverter}}"/>
+                                        <TextBlock Text="{Binding Type}" FontWeight="SemiBold"/>
+                                        <TextBlock Text=" – " FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Converter={StaticResource InteractionPartiesConverter}}"/>
+                                    </StackPanel>
+                                    <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Id}"/>
+                                    <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0 2 0 0"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </UserControl>

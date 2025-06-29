@@ -16,6 +16,7 @@
         <converters:CompanyNameConverter x:Key="CompanyNameConverter"/>
         <converters:PersonNameConverter  x:Key="PersonNameConverter"/>
         <converters:StatusBrushConverter x:Key="StatusBrushConverter" />
+        <converters:InteractionPartiesConverter     x:Key="InteractionPartiesConverter"/>
     </Application.Resources>
 
 </Application>
