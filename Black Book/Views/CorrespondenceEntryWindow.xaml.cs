@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace BlackBook.Views;
 
@@ -182,11 +183,30 @@ public partial class CorrespondenceEntryWindow : Window {
                             MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
+        //------------------------------------------------------------------
+        //  ⬇  after the try/catch that saves the profile  ⬇
+        //------------------------------------------------------------------
+
+        // 1️⃣ Let WPF know that the Situations and Interactions collections changed
+        var cvsSituations = CollectionViewSource.GetDefaultView(SessionManager.Data!.Situations);
+        var cvsInteractions = CollectionViewSource.GetDefaultView(SessionManager.Data.Interactions);
+        cvsSituations.Refresh();
+        cvsInteractions.Refresh();
+
+        // 2️⃣ Force the *single* affected Situation to raise property‑changed
+        if (interaction.SituationId is Guid sid && sid != Guid.Empty) {
+            var sit = SessionManager.Data.Situations.FirstOrDefault(s => s.Id == sid);
+            sit?.NotifyListsChanged();   // ✨ extension method you added earlier
+        }
+
+        // 3️⃣ Tell the user we’re done and close the dialog
         MessageBox.Show("Correspondence saved successfully.", "Saved",
                         MessageBoxButton.OK, MessageBoxImage.Information);
         DialogResult = true;
         Close();
     }
+
+    
 
     private void ReplyToSelected_Click (object sender, RoutedEventArgs e) {
         if (HistoryList.SelectedItem is not Interaction selected) {

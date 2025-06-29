@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace BlackBook.Models;
 
@@ -16,4 +18,17 @@ public enum SituationStatus {
     New,
     Ongoing,
     DoneWith
+}
+
+// This is for the "correspondence doesn't update correspondence list" problem
+public partial class Situation : INotifyPropertyChanged {
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private void OnPropertyChanged ([CallerMemberName] string? name = null) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    /// <summary>Call after adding / removing interactions so the UI refreshes.</summary>
+    public void NotifyListsChanged () {
+        OnPropertyChanged(nameof(Interactions));
+        OnPropertyChanged(nameof(People));         // both depend on Interactions
+    }
 }

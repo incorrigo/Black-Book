@@ -3,132 +3,133 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:models="clr-namespace:BlackBook.Models"
-        xmlns:conv="clr-namespace:BlackBook.Converters"
         Title="Enter Correspondence"
-        Height="480" Width="580"
-        WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        Width="620" Height="540"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+
+    <!-- ╭───────── page margin ─────────╮ -->
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <!-- time‑stamp               -->
             <RowDefinition Height="Auto"/>
+            <!-- person / company         -->
             <RowDefinition Height="Auto"/>
+            <!-- relation / dir / type    -->
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <!-- situation                -->
             <RowDefinition Height="*"/>
+            <!-- notes + history / reply  -->
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="200"/>
+            <!-- bottom buttons           -->
         </Grid.RowDefinitions>
 
-        <!-- Timestamp (read-only, current time) -->
+        <!-- time‑stamp -->
         <TextBlock x:Name="TimestampText"
-                   Grid.Row="0" FontSize="12" HorizontalAlignment="Right" Margin="0 0 0 10"/>
+                   Grid.Row="0"
+                   FontSize="12"
+                   HorizontalAlignment="Right"
+                   Margin="0 0 0 10"/>
 
-        <!-- Person name (editable combo for existing or new) -->
-        <ComboBox x:Name="PersonComboBox"
-                  Grid.Row="1" Padding="6" Margin="0 0 0 10"
-                  IsEditable="True" IsTextSearchEnabled="True"
-                  ItemsSource="{Binding People}" DisplayMemberPath="Name"
-                  ToolTip="Name of the person this correspondence is with."/>
+        <!-- person / company (stack) -->
+        <StackPanel Grid.Row="1" Margin="0 0 0 6">
+            <ComboBox x:Name="PersonComboBox"
+                      IsEditable="True" ItemsSource="{Binding People}"
+                      DisplayMemberPath="Name"/>
+            <ComboBox x:Name="CompanyComboBox"
+                      Margin="0 6 0 0"
+                      IsEditable="True" ItemsSource="{Binding Companies}"
+                      DisplayMemberPath="Name"/>
+        </StackPanel>
 
-        <!-- Company name (editable combo) -->
-        <ComboBox x:Name="CompanyComboBox"
-                  Grid.Row="2" Padding="6" Margin="0 0 0 10"
-                  IsEditable="True" IsTextSearchEnabled="True"
-                  ItemsSource="{Binding Companies}" DisplayMemberPath="Name"
-                  ToolTip="Company or organization of the person."/>
+        <!-- relation / dir / type  -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0 0 0 6">
+            <ComboBox x:Name="RelationshipComboBox" Width="110" Margin="0 0 6 0"
+                      SelectedIndex="0">
+                <ComboBoxItem Content="Unknown"/>
+                <ComboBoxItem Content="Friendly"/>
+                <ComboBoxItem Content="Neutral"/>
+                <ComboBoxItem Content="Adversarial"/>
+            </ComboBox>
 
-        <!-- Relationship -->
-        <ComboBox x:Name="RelationshipComboBox"
-                  Grid.Row="3" Padding="6" Margin="0 0 0 10"
-                  ToolTip="Your relationship with this person."
-                  SelectedIndex="0">
-            <ComboBoxItem Content="Unknown"/>
-            <ComboBoxItem Content="Friendly"/>
-            <ComboBoxItem Content="Neutral"/>
-            <ComboBoxItem Content="Adversarial"/>
-        </ComboBox>
+            <ComboBox x:Name="DirectionComboBox"  Width="100" Margin="0 0 6 0"
+                      SelectedIndex="0">
+                <ComboBoxItem Content="Incoming"/>
+                <ComboBoxItem Content="Outgoing"/>
+                <ComboBoxItem Content="Mutual"/>
+            </ComboBox>
 
-        <!-- Direction -->
-        <ComboBox x:Name="DirectionComboBox"
-                  Grid.Row="4" Padding="6" Margin="0 0 0 10"
-                  ToolTip="Whether this correspondence was incoming, outgoing, or mutual."
-                  SelectedIndex="0">
-            <ComboBoxItem Content="Incoming"/>
-            <ComboBoxItem Content="Outgoing"/>
-            <ComboBoxItem Content="Mutual"/>
-        </ComboBox>
+            <ComboBox x:Name="InteractionTypeComboBox" Width="130"
+                      SelectedIndex="0">
+                <ComboBoxItem Content="Email"/>
+                <ComboBoxItem Content="Phone Call"/>
+                <ComboBoxItem Content="Text Message"/>
+                <ComboBoxItem Content="In‑Person Meeting"/>
+                <ComboBoxItem Content="Video Conference"/>
+                <ComboBoxItem Content="Postal Mail"/>
+                <ComboBoxItem Content="Social Media"/>
+                <ComboBoxItem Content="Other"/>
+            </ComboBox>
+        </StackPanel>
 
-        <!-- Interaction Type -->
-        <ComboBox x:Name="InteractionTypeComboBox"
-                  Grid.Row="5" Padding="6" Margin="0 0 0 10"
-                  ToolTip="Type of interaction."
-                  SelectedIndex="0">
-            <ComboBoxItem Content="Email"/>
-            <ComboBoxItem Content="Phone Call"/>
-            <ComboBoxItem Content="Text Message"/>
-            <ComboBoxItem Content="In-Person Meeting"/>
-            <ComboBoxItem Content="Video Conference"/>
-            <ComboBoxItem Content="Postal Mail"/>
-            <ComboBoxItem Content="Social Media"/>
-            <ComboBoxItem Content="Other"/>
-        </ComboBox>
-
-        <!-- Situation (editable ComboBox for context) -->
+        <!-- situation -->
         <ComboBox x:Name="SituationComboBox"
-                  Grid.Row="6" Padding="6" Margin="0 0 0 10"
-                  IsEditable="True" IsTextSearchEnabled="False"
-                  ItemsSource="{Binding Situations}" DisplayMemberPath="Title"
-                  ToolTip="Situation or project this correspondence relates to."
-                  Text="AdHoc"/>
+                  Grid.Row="3"
+                  Text="AdHoc"
+                  IsEditable="True"
+                  ItemsSource="{Binding Situations}"
+                  DisplayMemberPath="Title"
+                  Margin="0 0 0 6"/>
 
-        <!-- Notes (multi-line text) -->
-        <TextBox x:Name="NotesTextBox"
-                 Grid.Row="7" Padding="6" Margin="0 0 0 10"
-                 AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                 Height="80"
-                 ToolTip="Notes or summary of the correspondence."/>
-
-        <!-- Buttons (Cancel/Save) -->
-        <Grid Grid.Row="8">
+        <!-- notes + history + reply -->
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="270"/>
             </Grid.ColumnDefinitions>
-            <Button Content="Cancel" Grid.Column="1" Width="90" Margin="0 0 5 0"
-                    Click="Cancel_Click" IsCancel="True"/>
-            <Button x:Name="SaveButton" Content="Save" Grid.Column="2" Width="90"
-                    Click="Save_Click" IsDefault="True"/>
+
+            <!-- notes -->
+            <TextBox x:Name="NotesTextBox"
+                     Grid.Column="0"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"/>
+
+            <!-- history + send‑response -->
+            <DockPanel Grid.Column="1" Margin="10 0 0 0">
+                <ListBox x:Name="HistoryList"
+                         DockPanel.Dock="Top"
+                         Height="200"
+                         FontSize="12">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:Interaction}">
+                            <StackPanel Orientation="Horizontal" Margin="0 1">
+                                <TextBlock Text="{Binding Timestamp,
+                                           StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                           Margin="0 0 4 0"/>
+                                <TextBlock Text="—" Margin="0 0 4 0"/>
+                                <TextBlock Text="{Binding Notes}"
+                                           Width="160"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Button x:Name="ReplyButton" Content="Send Response"
+                        Margin="0 6 0 0"
+                        Click="ReplyToSelected_Click"/>
+            </DockPanel>
         </Grid>
 
-        <!-- History list of past interactions with this person -->
-        <ListBox x:Name="HistoryList"
-                 Grid.Row="9" FontSize="12" Padding="4" Margin="0 10 0 0"
-                 ToolTip="Previous correspondence with this person (most recent first).">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:Interaction}">
-                    <Grid Margin="0 2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <!-- Relationship glyph of person for quick context -->
-                        <TextBlock Grid.Column="0" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Text="{Binding Person.Relationship, Converter={StaticResource RelationshipGlyphConverter}}"/>
-                        <!-- Notes preview -->
-                        <TextBlock Grid.Column="1" Text="{Binding Notes}" TextWrapping="Wrap"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <!-- Button to reply to selected past interaction (prefill form) -->
-        <Button x:Name="ReplyButton"
-                Content="Send Response"
-                Width="120" HorizontalAlignment="Right" Margin="0 8 0 0"
-                Grid.Row="9" Click="ReplyToSelected_Click"/>
+        <!-- bottom buttons -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="0 10 0 0">
+            <Button Content="Cancel" Width="90" Margin="0 0 8 0"
+                    Click="Cancel_Click" IsCancel="True"/>
+            <Button x:Name="SaveButton" Content="Save" Width="90"
+                    Click="Save_Click" IsDefault="True"/>
+        </StackPanel>
     </Grid>
 </Window>
