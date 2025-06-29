@@ -3,14 +3,14 @@
 namespace BlackBook.Models;
 
 public partial class Interaction {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
-    public string PersonId { get; set; }
-    public string CompanyId { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid PersonId { get; set; }
+    public Guid? CompanyId { get; set; }
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     public InteractionDirection Direction { get; set; }
     public InteractionType Type { get; set; }
     public string Notes { get; set; }
-    public string SituationId { get; set; } // clearly linked to Situation
+    public Guid? SituationId { get; set; } // clearly linked to Situation
 }
 
 public enum InteractionDirection {

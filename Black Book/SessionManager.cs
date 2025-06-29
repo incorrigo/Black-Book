@@ -6,7 +6,7 @@ namespace BlackBook;
 
 public static class SessionManager {
     public static string CurrentUserName { get; private set; } = string.Empty;
-    public static string CurrentPassword { get; private set; } = string.Empty;
+    public static string CurrentPassword { get; set; } = string.Empty;
     public static BlackBook.Storage.BlackBookContainer? Data { get; private set; }
 
     /// <summary>True = password OK and data loaded.<br/>

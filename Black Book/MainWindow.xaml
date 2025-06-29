@@ -11,29 +11,28 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="Close Profile" Click="CloseProfile_Click" />
+                <MenuItem Header="Change Password..." Click="ChangePassword_Click" />
                 <Separator/>
                 <MenuItem Header="E_xit" Click="Exit_Click" />
             </MenuItem>
             <MenuItem Header="_New">
-                <MenuItem Header="Person..."    Click="NewPerson_Click" />
-                <MenuItem Header="Company..."   Click="NewCompany_Click" />
-                <MenuItem Header="Situation..." Click="NewSituation_Click" />
+                <MenuItem Header="Person..."      Click="NewPerson_Click" />
+                <MenuItem Header="Company..."     Click="NewCompany_Click" />
+                <MenuItem Header="Situation..."   Click="NewSituation_Click" />
                 <MenuItem Header="Correspondence..." Click="NewInteraction_Click" />
             </MenuItem>
-            <!-- (Additional menus like Help can be added here) -->
         </Menu>
 
         <!-- Main content as a TabControl -->
         <TabControl x:Name="MainTabControl">
-            <!-- Contacts Tab -->
             <TabItem Header="Contacts">
-                <!-- Embed the PeopleManager user control -->
                 <views:PeopleManager x:Name="PeopleManagerView" />
             </TabItem>
-            <!-- Situations Tab -->
             <TabItem Header="Situations">
-                <!-- Embed the SituationManager user control -->
                 <views:SituationManager x:Name="SituationManagerView" />
+            </TabItem>
+            <TabItem Header="Companies">
+                <views:CompanyManager x:Name="CompanyManagerView" />
             </TabItem>
         </TabControl>
     </DockPanel>

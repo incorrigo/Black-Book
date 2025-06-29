@@ -3,18 +3,27 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
-using BlackBook;
 
 namespace BlackBook.Converters;
 
-    /// <summary>Returns the Person.Name that belongs to the supplied PersonId string.</summary>
-    public sealed class PersonNameConverter : IValueConverter {
-        public object Convert (object value, Type t, object p, CultureInfo c) {
-            var id = value as string;
-            if (string.IsNullOrEmpty(id) || SessionManager.Data is null) return "–";
-            return SessionManager.Data.People.FirstOrDefault(pe => pe.Id == id)?.Name ?? "–";
-        }
+public sealed class PersonNameConverter : IValueConverter {
+    public object Convert (object value, Type _, object __, CultureInfo ___) {
+        if (SessionManager.Data is null || value is null) return "–";
 
-        public object ConvertBack (object value, Type t, object p, CultureInfo c)
-            => throw new NotSupportedException();
+        Guid id = ExtractGuid(value);
+        if (id == Guid.Empty) return "–";
+
+        return SessionManager.Data.People
+                                 .FirstOrDefault(p => p.Id == id)
+                                ?.Name ?? "–";
     }
+
+    public object ConvertBack (object value, Type _, object __, CultureInfo ___)
+        => throw new NotSupportedException();
+
+    private static Guid ExtractGuid (object value) {
+        if (value is Guid g) return g;
+        if (value is string s && Guid.TryParse(s, out var p)) return p;
+        return Guid.Empty;
+    }
+}

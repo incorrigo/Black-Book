@@ -11,41 +11,36 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Timestamp display -->
             <RowDefinition Height="Auto"/>
-            <!-- Person -->
             <RowDefinition Height="Auto"/>
-            <!-- Company -->
             <RowDefinition Height="Auto"/>
-            <!-- Relationship -->
             <RowDefinition Height="Auto"/>
-            <!-- Direction -->
             <RowDefinition Height="Auto"/>
-            <!-- Type -->
             <RowDefinition Height="Auto"/>
-            <!-- Situation -->
             <RowDefinition Height="*"/>
-            <!-- Notes (fills remaining space) -->
             <RowDefinition Height="Auto"/>
-            <!-- Buttons -->
             <RowDefinition Height="200"/>
-            <!-- History list -->
         </Grid.RowDefinitions>
 
         <!-- Timestamp (read-only, current time) -->
         <TextBlock x:Name="TimestampText"
                    Grid.Row="0" FontSize="12" HorizontalAlignment="Right" Margin="0 0 0 10"/>
 
-        <!-- Person name -->
-        <TextBox x:Name="PersonTextBox"
-                 Grid.Row="1" Padding="6" Margin="0 0 0 10"
-                 ToolTip="Name of the person this correspondence is with."/>
+        <!-- Person name (editable combo for existing or new) -->
+        <ComboBox x:Name="PersonComboBox"
+                  Grid.Row="1" Padding="6" Margin="0 0 0 10"
+                  IsEditable="True" IsTextSearchEnabled="True"
+                  ItemsSource="{Binding People}" DisplayMemberPath="Name"
+                  ToolTip="Name of the person this correspondence is with."/>
 
-        <!-- Company name -->
-        <TextBox x:Name="CompanyTextBox"
-                 Grid.Row="2" Padding="6" Margin="0 0 0 10"
-                 ToolTip="Company or organization of the person."/>
-        <!-- Relationship (auto-selected based on person if exists) -->
+        <!-- Company name (editable combo) -->
+        <ComboBox x:Name="CompanyComboBox"
+                  Grid.Row="2" Padding="6" Margin="0 0 0 10"
+                  IsEditable="True" IsTextSearchEnabled="True"
+                  ItemsSource="{Binding Companies}" DisplayMemberPath="Name"
+                  ToolTip="Company or organization of the person."/>
+
+        <!-- Relationship -->
         <ComboBox x:Name="RelationshipComboBox"
                   Grid.Row="3" Padding="6" Margin="0 0 0 10"
                   ToolTip="Your relationship with this person."
@@ -56,13 +51,14 @@
             <ComboBoxItem Content="Adversarial"/>
         </ComboBox>
 
-        <!-- Direction (incoming/outgoing) -->
+        <!-- Direction -->
         <ComboBox x:Name="DirectionComboBox"
                   Grid.Row="4" Padding="6" Margin="0 0 0 10"
-                  ToolTip="Whether this correspondence was incoming (received) or outgoing (sent)."
+                  ToolTip="Whether this correspondence was incoming, outgoing, or mutual."
                   SelectedIndex="0">
             <ComboBoxItem Content="Incoming"/>
             <ComboBoxItem Content="Outgoing"/>
+            <ComboBoxItem Content="Mutual"/>
         </ComboBox>
 
         <!-- Interaction Type -->
@@ -87,7 +83,6 @@
                   ItemsSource="{Binding Situations}" DisplayMemberPath="Title"
                   ToolTip="Situation or project this correspondence relates to."
                   Text="AdHoc"/>
-        <!-- default text for uncategorized correspondence -->
 
         <!-- Notes (multi-line text) -->
         <TextBox x:Name="NotesTextBox"

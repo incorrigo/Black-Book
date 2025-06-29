@@ -2,26 +2,27 @@
 <Window x:Class="BlackBook.Views.SituationEntryWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Add Situation"
-        Height="180" Width="400"
-        WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:models="clr-namespace:BlackBook.Models">
+        xmlns:models="clr-namespace:BlackBook.Models"
+        Title="Add Situation"
+        Height="280" Width="400"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
     <Window.Resources>
-        <ObjectDataProvider x:Key="StatusValues"
-                        MethodName="GetValues"
-                        ObjectType="{x:Type sys:Enum}">
+        <ObjectDataProvider x:Key="StatusValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="models:SituationStatus"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <models:SituationStatus x:Key="DefaultStatus" >AdHoc</models:SituationStatus>
+        <conv:SituationStatusConverter x:Key="SituationStatusConverter" xmlns:conv="clr-namespace:BlackBook.Converters" />
     </Window.Resources>
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -33,14 +34,21 @@
         <TextBox x:Name="TitleBox" Grid.Row="0" Grid.Column="1" Margin="0 2 0 4"/>
 
         <TextBlock Text="Status:" Grid.Row="1" Grid.Column="0" Margin="0 4 0 0" VerticalAlignment="Center"/>
-        <ComboBox x:Name="StatusBox"
-          Grid.Row="1" Grid.Column="1"
-          Margin="0 2 0 4"
-          ItemsSource="{Binding Source={StaticResource StatusValues}}"
-          SelectedIndex="0"/>
+        <ComboBox x:Name="StatusBox" Grid.Row="1" Grid.Column="1" Margin="0 2 0 4"
+                  ItemsSource="{Binding Source={StaticResource StatusValues}}"
+                  SelectedIndex="0">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource SituationStatusConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
+        <TextBlock Text="Description:" Grid.Row="2" Grid.Column="0" Margin="0 4 0 0" VerticalAlignment="Top"/>
+        <TextBox x:Name="DescBox" Grid.Row="2" Grid.Column="1" Margin="0 2 0 4"
+                 AcceptsReturn="True" Height="80" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 10 0 0">
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 10 0 0">
             <Button Content="Cancel" Width="80" Margin="0 0 8 0"
                     Click="Cancel_Click" IsCancel="True"/>
             <Button Content="Save" Width="80"

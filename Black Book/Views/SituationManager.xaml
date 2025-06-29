@@ -6,21 +6,34 @@
     <UserControl.Resources>
         <conv:PersonNameConverter x:Key="PersonNameConverter" />
         <conv:CompanyNameConverter x:Key="CompanyNameConverter" />
-        <!-- Assume StatusBrushConverter and DirectionColorConverter are available as resources (perhaps in App.xaml).
-             If not, they would be defined similarly here. -->
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </UserControl.Resources>
     <Grid Margin="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <!-- Situations list -->
             <ColumnDefinition Width="2*"/>
-            <!-- Interaction details list -->
         </Grid.ColumnDefinitions>
 
         <!-- List of situations -->
-        <ListView x:Name="SituationsList" Grid.Column="0" 
-                  ItemsSource="{Binding Situations}" 
-                  SelectedIndex="0" Margin="0 0 8 0">
+        <ListView x:Name="SituationsList" Grid.Column="0"
+                  ItemsSource="{Binding Situations}"
+                  SelectedIndex="0" Margin="0 0 8 0"
+                  MouseDoubleClick="SituationsList_MouseDoubleClick">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Edit Situation"
+                      Click="EditSituation_Click"/>
+                    <MenuItem Header="Delete Situation"
+                      Click="DeleteSituation_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Add Correspondence…"
+                      Click="AddCorrespondence_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0 2">
@@ -43,19 +56,32 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- Interactions in selected situation -->
+        <!-- Situation details and interactions -->
         <Border Grid.Column="1" Padding="8" BorderBrush="#CCC" BorderThickness="1">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <!-- Interaction history list -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Reply button at bottom -->
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <!-- Situation description and meta -->
+                <StackPanel Grid.Row="0" Margin="0 0 0 4">
+                    <TextBlock Text="{Binding ElementName=SituationsList, Path=SelectedItem.Description}" 
+                               TextWrapping="Wrap" Foreground="Gray"/>
+                    <TextBlock FontSize="10" Foreground="Gray"
+                               Text="{Binding ElementName=SituationsList, Path=SelectedItem.Created, StringFormat=Created: {0:yyyy-MM-dd}}"/>
+                    <TextBlock x:Name="ClosedText" FontSize="10" Foreground="Gray"
+                               Text="{Binding ElementName=SituationsList, Path=SelectedItem.Closed, StringFormat=Closed: {0:yyyy-MM-dd}}"
+                               Visibility="{Binding ElementName=SituationsList, Path=SelectedItem.Closed, Converter={StaticResource NullToVisibilityConverter}}"/>
+                    <TextBlock Margin="0 8 0 4" FontStyle="Italic" Text="People involved:"/>
+                    <ListBox x:Name="PeopleListInSituation"
+                             ItemsSource="{Binding ElementName=SituationsList, Path=SelectedItem.People}"
+                             DisplayMemberPath="Name"
+                             MouseDoubleClick="PeopleListInSituation_MouseDoubleClick"/>
+                </StackPanel>
                 <!-- Interaction history list -->
-                <ListBox x:Name="HistoryList" Grid.Row="0" 
-                         ItemsSource="{Binding ElementName=SituationsList, Path=SelectedItem.Interactions}" 
-                         Margin="0 0 0 4">
+                <ListBox x:Name="HistoryList" Grid.Row="1" Margin="0 0 0 4"
+                         ItemsSource="{Binding ElementName=SituationsList, Path=SelectedItem.Interactions}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0 4 0 4">
@@ -65,13 +91,13 @@
                                 <!-- Type and Person (with direction indicator) -->
                                 <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
                                     <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0 0 6 0"
-                                             Fill="{Binding Direction, Converter={StaticResource DirectionColorConverter}}" />
+                                             Fill="{Binding Direction, Converter={StaticResource DirectionColorConverter}}"/>
                                     <TextBlock Text="{Binding Type}" FontWeight="SemiBold" />
                                     <TextBlock Text=" – " FontWeight="SemiBold" />
                                     <TextBlock Text="{Binding PersonId, Converter={StaticResource PersonNameConverter}}" FontStyle="Italic"/>
                                 </StackPanel>
                                 <!-- Interaction ID (subtle) -->
-                                <TextBlock FontSize="10" Foreground="Gray" 
+                                <TextBlock FontSize="10" Foreground="Gray"
                                            Text="{Binding Id}" />
                                 <!-- Notes/content -->
                                 <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0 2 0 0"/>
@@ -80,8 +106,8 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <!-- Reply (respond) button -->
-                <Button x:Name="ReplyButton" Grid.Row="1" Content="Send Response" Width="120" 
-                        HorizontalAlignment="Right" Margin="0 4 0 0"
+                <Button x:Name="ReplyButton" Grid.Row="2" Content="Send Response" Width="120"
+                        HorizontalAlignment="Right" Margin="0 0 0 0"
                         Click="ReplyToSelected_Click"/>
             </Grid>
         </Border>

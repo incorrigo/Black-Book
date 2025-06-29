@@ -1,55 +1,81 @@
 ﻿// SituationEntryWindow.xaml.cs
-using BlackBook.Models;
-using BlackBook.Security;
-using BlackBook.Storage;
 using System;
 using System.Threading;
 using System.Windows;
+using BlackBook.Models;
+using BlackBook.Security;
+using BlackBook.Storage;
 
-namespace BlackBook.Views {
-    public partial class SituationEntryWindow : Window {
-        private readonly BlackBookContainer data;
-        public SituationEntryWindow () {
-            InitializeComponent();
-            data = SessionManager.Data!;
+namespace BlackBook.Views;
+
+public partial class SituationEntryWindow : Window {
+    private readonly BlackBookContainer data;
+    private Situation? editingSituation;
+
+    public SituationEntryWindow (Situation? situationToEdit = null) {
+        InitializeComponent();
+        data = SessionManager.Data!;
+        if (situationToEdit != null) {
+            Title = "Edit Situation";
+            TitleBox.Text = situationToEdit.Title;
+            StatusBox.SelectedIndex = (int)situationToEdit.Status;
+            DescBox.Text = situationToEdit.Description;
+            editingSituation = situationToEdit;
         }
+    }
 
-        private void Cancel_Click (object sender, RoutedEventArgs e) {
-            DialogResult = false;
-            Close();
+    private void Cancel_Click (object sender, RoutedEventArgs e) {
+        DialogResult = false;
+        Close();
+    }
+
+    private async void Save_Click (object sender, RoutedEventArgs e) {
+        if (string.IsNullOrWhiteSpace(TitleBox.Text)) {
+            MessageBox.Show("Situation title is required.", "Incomplete",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
         }
-
-        private async void Save_Click (object sender, RoutedEventArgs e) {
-            if (string.IsNullOrWhiteSpace(TitleBox.Text)) {
-                MessageBox.Show("Situation title is required.", "Incomplete",
-                                MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+        var status = (SituationStatus)StatusBox.SelectedIndex;
+        if (editingSituation != null) {
+            // Update existing situation
+            editingSituation.Title = TitleBox.Text.Trim();
+            var oldStatus = editingSituation.Status;
+            editingSituation.Status = status;
+            editingSituation.Description = DescBox.Text.Trim();
+            if (oldStatus != SituationStatus.DoneWith && status == SituationStatus.DoneWith) {
+                editingSituation.Closed = DateTime.UtcNow;
             }
-            // Determine status from selection (assuming 0=Active, 1=Closed for now)
-            var status = (SituationStatus)StatusBox.SelectedIndex;
-            // Create situation
+            if (oldStatus == SituationStatus.DoneWith && status != SituationStatus.DoneWith) {
+                editingSituation.Closed = null;
+            }
+        }
+        else {
+            // Create new situation
             var situation = new Situation {
                 Title = TitleBox.Text.Trim(),
-                Status = status
+                Status = status,
+                Description = DescBox.Text.Trim()
             };
+            if (status == SituationStatus.DoneWith) {
+                situation.Closed = DateTime.UtcNow;
+            }
             data.Situations.Add(situation);
-            try {
-                await SecureProfileManager.SaveProfileAsync(
-                    SessionManager.CurrentUserName,
-                    SessionManager.CurrentPassword,
-                    data,
-                    System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users"),
-                    CancellationToken.None
-                );
-                MessageBox.Show("Situation added successfully.", "Saved",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
-                DialogResult = true;
-                Close();
-            }
-            catch (Exception ex) {
-                MessageBox.Show($"Failed to save data:\n{ex.Message}",
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
+        try {
+            await SecureProfileManager.SaveProfileAsync(SessionManager.CurrentUserName, SessionManager.CurrentPassword,
+                                                        data,
+                                                        System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users"),
+                                                        CancellationToken.None);
+        }
+        catch (Exception ex) {
+            MessageBox.Show($"Failed to save data:\n{ex.Message}",
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        MessageBox.Show(editingSituation != null ? "Situation updated successfully."
+                                                 : "Situation added successfully.",
+                        "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+        DialogResult = true;
+        Close();
     }
 }
