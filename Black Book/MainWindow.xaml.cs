@@ -71,4 +71,9 @@ public partial class MainWindow : Window {
         cpWindow.Owner = this;
         cpWindow.ShowDialog();
     }
+
+    private void About_Click (object sender, RoutedEventArgs e) {
+        new About { Owner = this }.ShowDialog();
+    }
+
 }
