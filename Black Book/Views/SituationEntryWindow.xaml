@@ -7,7 +7,7 @@
         Title="Add Situation"
         Height="280" Width="400"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" FontFamily="Verdana">
     <Window.Resources>
         <ObjectDataProvider x:Key="StatusValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>

@@ -1,69 +1,59 @@
 ﻿<!-- CompanyManager.xaml -->
 <UserControl x:Class="BlackBook.Views.CompanyManager"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:conv="clr-namespace:BlackBook.Converters"
-             MinWidth="300">
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:conv="clr-namespace:BlackBook.Converters"
+			 MinWidth="600" FontFamily="Verdana">
 
     <UserControl.Resources>
         <conv:PersonNameConverter x:Key="PersonNameConverter"/>
+        <conv:DirectionColorConverter x:Key="DirectionColorConverter"/>
+        <conv:InteractionTypeFriendlyConverter x:Key="InteractionTypeFriendlyConverter"/>
+        <conv:InteractionPartiesConverter x:Key="InteractionPartiesConverter"/>
     </UserControl.Resources>
 
     <Grid Margin="8">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="2*"/>
+            <!-- List -->
+            <ColumnDefinition Width="5"/>
+            <!-- Splitter -->
+            <ColumnDefinition Width="3*"/>
+            <!-- Details -->
         </Grid.ColumnDefinitions>
 
+        <!-- Company List -->
         <ListView x:Name="CompanyList"
-              Grid.Column="0"
-              ItemsSource="{Binding Companies}"
-              SelectedIndex="0"
-              Margin="0,0,8,0"
-              MouseDoubleClick="CompanyList_MouseDoubleClick">
+				  Grid.Column="0"
+				  ItemsSource="{Binding Companies}"
+				  SelectedIndex="0"
+				  MouseDoubleClick="CompanyList_MouseDoubleClick">
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Edit Company"   Click="EditCompany_Click"/>
+                    <MenuItem Header="Edit Company" Click="EditCompany_Click"/>
                     <MenuItem Header="Delete Company" Click="DeleteCompany_Click"/>
                     <Separator/>
-                    <MenuItem Header="Add Person…"     Click="AddPerson_Click"/>
+                    <MenuItem Header="Add Person…" Click="AddPerson_Click"/>
                     <MenuItem Header="Add Correspondence…" Click="AddCorrespondence_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>
 
             <ListView.View>
                 <GridView>
-                    <!-- Company Name -->
-                    <GridViewColumn Header="Company"
-                          Width="200"
-                          DisplayMemberBinding="{Binding Name}">
-                        <GridViewColumn.HeaderContainerStyle>
-                            <Style TargetType="GridViewColumnHeader">
-                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                            </Style>
-                        </GridViewColumn.HeaderContainerStyle>
-                    </GridViewColumn>
-
-                    <!-- Contacts Count -->
-                    <GridViewColumn Header="Contacts"
-                          Width="60">
+                    <GridViewColumn Header="Company" Width="Auto" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Contacts" Width="60">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding People.Count}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+										   HorizontalAlignment="Center"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-
-                    <!-- Interactions Count -->
-                    <GridViewColumn Header="Interactions"
-                          Width="80">
+                    <GridViewColumn Header="Interactions" Width="80">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Interactions.Count}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+										   HorizontalAlignment="Center"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -71,77 +61,78 @@
             </ListView.View>
         </ListView>
 
-        <Border Grid.Column="1" Padding="12" BorderBrush="#AAA" BorderThickness="1">
+        <!-- GridSplitter for resizing -->
+        <GridSplitter Grid.Column="1" Width="5"
+					  HorizontalAlignment="Stretch"
+					  Background="#CCC"
+					  VerticalAlignment="Stretch"
+					  ResizeBehavior="PreviousAndNext"
+					  ResizeDirection="Columns"/>
 
+        <!-- Detail and History Section -->
+        <Border Grid.Column="2" Padding="12" BorderBrush="#AAA" BorderThickness="1">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-
                     <TextBlock FontSize="18" FontWeight="Bold"
-                               Text="{Binding ElementName=CompanyList, Path=SelectedItem.Name}"/>
+							   Text="{Binding ElementName=CompanyList, Path=SelectedItem.Name}"/>
                     <TextBlock FontSize="10" Foreground="Gray"
-                               Text="{Binding ElementName=CompanyList, Path=SelectedItem.Id}"/>
+							   Text="{Binding ElementName=CompanyList, Path=SelectedItem.Id}"/>
 
-                    <TextBlock>
-                        <Run Text="Address: "/>
-                        <Run Text="{Binding ElementName=CompanyList,
-                                            Path=SelectedItem.Address,
-                                            TargetNullValue='N/A'}"/>
-                    </TextBlock>
+                    <StackPanel Margin="0,4,0,4">
+                        <TextBlock>
+							<Run FontWeight="SemiBold" Text="Address: "/>
+							<Run Text="{Binding ElementName=CompanyList, Path=SelectedItem.Address, TargetNullValue='N/A'}"/>
+                        </TextBlock>
 
-                    <TextBlock Margin="0 2 0 0">
-                        <Run Text="Phone: "/>
-                        <Run Text="{Binding ElementName=CompanyList,
-                                            Path=SelectedItem.PhoneNumber,
-                                            TargetNullValue='N/A'}"/>
-                    </TextBlock>
+                        <TextBlock>
+							<Run FontWeight="SemiBold" Text="Phone: "/>
+							<Run Text="{Binding ElementName=CompanyList, Path=SelectedItem.PhoneNumber, TargetNullValue='N/A'}"/>
+                        </TextBlock>
 
-                    <TextBlock Margin="0 2 0 0">
-                        <Run Text="Website: "/>
-                        <Run Text="{Binding ElementName=CompanyList,
-                                            Path=SelectedItem.Website,
-                                            TargetNullValue='N/A'}"/>
-                    </TextBlock>
+                        <TextBlock>
+							<Run FontWeight="SemiBold" Text="Website: "/>
+							<Run Text="{Binding ElementName=CompanyList, Path=SelectedItem.Website, TargetNullValue='N/A'}"/>
+                        </TextBlock>
+                    </StackPanel>
 
-                    <TextBlock Text="{Binding ElementName=CompanyList,
-                                              Path=SelectedItem.Description}"
-                               TextWrapping="Wrap" Margin="0 4 0 0"/>
+                    <TextBlock Text="{Binding ElementName=CompanyList, Path=SelectedItem.Description}"
+							   TextWrapping="Wrap" Margin="0,4,0,4"/>
 
-                    <TextBlock Margin="0 8 0 4" FontStyle="Italic" Text="Contacts:"/>
+                    <!-- Contacts -->
+                    <TextBlock FontStyle="Italic" Margin="0,8,0,4" Text="Contacts:"/>
                     <ListBox x:Name="PeopleList"
-                             ItemsSource="{Binding ElementName=CompanyList,
-                                                   Path=SelectedItem.People}"
-                             DisplayMemberPath="Name"
-                             MouseDoubleClick="PeopleList_MouseDoubleClick"/>
+							 ItemsSource="{Binding ElementName=CompanyList, Path=SelectedItem.People}"
+							 DisplayMemberPath="Name"
+							 MouseDoubleClick="PeopleList_MouseDoubleClick"
+							 Height="100"/>
 
-                    <TextBlock Margin="0 8 0 4" FontStyle="Italic" Text="Recent Interactions:"/>
+                    <!-- Interactions -->
+                    <TextBlock FontStyle="Italic" Margin="0,8,0,4" Text="Recent Interactions:"/>
                     <ListBox x:Name="InteractionList"
-                             ItemsSource="{Binding ElementName=CompanyList,
-                                                   Path=SelectedItem.Interactions}">
+							 ItemsSource="{Binding ElementName=CompanyList, Path=SelectedItem.Interactions}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="0 4 0 4">
+                                <StackPanel Margin="0,4,0,8">
                                     <TextBlock FontWeight="Bold"
-                                               Text="{Binding Timestamp,
-                                                              StringFormat={}{0:yyyy-MM-dd [dddd] - HH:mm}}"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                                        <Ellipse Width="8" Height="8" Margin="0 0 6 0"
-                                                 VerticalAlignment="Center"
-                                                 Fill="{Binding Direction,
-                                                                Converter={StaticResource DirectionColorConverter}}"/>
-                                        <TextBlock Text="{Binding Type,
-                                                            Converter={StaticResource InteractionTypeFriendlyConverter}}"
-                                                   FontWeight="SemiBold"/>
-                                        <TextBlock Text=" – " FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding Converter={StaticResource InteractionPartiesConverter}}"
-                                                   FontStyle="Italic"/>
+											   Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd [dddd] - HH:mm}}"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                        <Ellipse Width="8" Height="8" Margin="0,0,6,0"
+												 VerticalAlignment="Center"
+												 Fill="{Binding Direction, Converter={StaticResource DirectionColorConverter}}"/>
+                                        <TextBlock FontWeight="SemiBold"
+												   Text="{Binding Type, Converter={StaticResource InteractionTypeFriendlyConverter}}"/>
+                                        <TextBlock FontWeight="SemiBold" Text=" – "/>
+                                        <TextBlock FontStyle="Italic"
+												   Text="{Binding Converter={StaticResource InteractionPartiesConverter}}"/>
                                     </StackPanel>
+
                                     <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Id}"/>
-                                    <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0 2 0 0"/>
+                                    <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-
                 </StackPanel>
             </ScrollViewer>
         </Border>

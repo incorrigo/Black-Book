@@ -5,7 +5,7 @@
         Title="Create New Profile"
         Height="300" Width="400"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" FontFamily="Verdana">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -1,6 +1,7 @@
-﻿using System.IO;
+﻿using BlackBook.Security;
+using System.IO;
 using System.Threading.Tasks;
-using BlackBook.Security;
+using System.Windows;
 
 namespace BlackBook;
 
@@ -23,6 +24,19 @@ public static class SessionManager {
             return true;
         }
         catch (ProfileAuthenticationException) { return false; }
+        catch (FileNotFoundException ex) when (ex.FileName.EndsWith("file.file")) {
+            Data = null;
+            CurrentUserName = string.Empty;
+            CurrentPassword = string.Empty;
+
+            // Clearly indicate the absence of the key file
+            MessageBox.Show("Can't unlock this profile without the key! " +
+                            "Replace file.file in the profile folder",
+                            "Black Book | Key Missing",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            return false;
+        }
     }
 
     public static async Task SaveAndClearAsync () {
