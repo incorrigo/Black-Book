@@ -1,5 +1,6 @@
 ﻿// MainWindow.xaml.cs
 using System.Windows;
+using System.IO;
 using BlackBook.Models;
 
 namespace BlackBook.Views;
@@ -32,6 +33,42 @@ public partial class MainWindow : Window {
             }
         }
     }
+
+    private async void DeleteProfile_Click (object sender, RoutedEventArgs e) {
+        var confirmWindow = new ProfileDeleteConfirmWindow();
+        confirmWindow.Owner = this;
+        if (confirmWindow.ShowDialog() != true)
+            return;
+
+        var progressWindow = new ProfileDeleteProgressWindow();
+        progressWindow.Owner = this;
+        progressWindow.Show();
+
+        var progress = new Progress<double>(val => progressWindow.SetProgress(val));
+
+        try {
+            await Security.ForensicProfileDeletion.DeleteProfileAsync(
+                confirmWindow.ProfileName,
+                confirmWindow.Password,
+                confirmWindow.ConfirmDelete,
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users"),
+                progress);
+
+            progressWindow.Close();
+
+            MessageBox.Show(
+                "When a profile is deleted Black Book must be restarted\r\nYour profile has been deleted. Have a nice day!",
+                "Forensic Delete", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            Application.Current.Shutdown();
+        }
+        catch (Exception ex) {
+            progressWindow.Close();
+            MessageBox.Show($"Profile deletion failed:\n{ex.Message}",
+                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
 
     private async void NewCompany_Click (object sender, RoutedEventArgs e) {
         var companyWindow = new CompanyEntryWindow();

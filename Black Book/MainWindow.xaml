@@ -12,11 +12,13 @@
             <MenuItem Header="_File">
                 <MenuItem Header="Close Profile" Click="CloseProfile_Click"/>
                 <MenuItem Header="Change Password..." Click="ChangePassword_Click"/>
+                <MenuItem Header="Delete Profile..." Click="DeleteProfile_Click"/>
                 <Separator/>
                 <MenuItem Header="_About Black Book..." Click="About_Click"/>
                 <Separator/>
                 <MenuItem Header="E_xit" Click="Exit_Click"/>
             </MenuItem>
+
 
             <MenuItem Header="_New">
                 <MenuItem Header="Person..."      Click="NewPerson_Click" />

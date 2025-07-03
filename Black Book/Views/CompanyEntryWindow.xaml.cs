@@ -37,10 +37,11 @@ public partial class CompanyEntryWindow : Window {
             return;
         }
         if (editingCompany != null) {
-            // Update existing company
+            // Edit company
             editingCompany.Name = NameBox.Text.Trim();
             editingCompany.Address = AddrBox.Text.Trim();
             editingCompany.PhoneNumber = PhoneBox.Text.Trim();
+            editingCompany.Website = WebsiteBox.Text.Trim();
             editingCompany.Description = DescBox.Text.Trim();
         }
         else {
@@ -49,6 +50,7 @@ public partial class CompanyEntryWindow : Window {
                 Name = NameBox.Text.Trim(),
                 Address = AddrBox.Text.Trim(),
                 PhoneNumber = PhoneBox.Text.Trim(),
+                Website = WebsiteBox.Text.Trim(),
                 Description = DescBox.Text.Trim()
             };
             data.Companies.Add(company);
