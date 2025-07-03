@@ -5,6 +5,11 @@ using System.Windows.Media;
 namespace BlackBook.Helpers;
 
 public static class PlaceholderHelper {
+
+    /// <summary>
+    // PlaceholderHelper is an implementation of attached property that enables placeholder text
+    // without wasting time fucking about with third party packages
+    /// </summary>
     public static readonly DependencyProperty PlaceholderTextProperty =
         DependencyProperty.RegisterAttached(
             "PlaceholderText", typeof(string), typeof(PlaceholderHelper),

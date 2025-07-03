@@ -282,6 +282,8 @@ public partial class CorrespondenceEntryWindow : Window {
     }
 
     public void PrefillForReply (Interaction selected) {
+
+        // Load the contact and situation information for quick response control
         var person = people.FirstOrDefault(p => p.Id == selected.PersonId);
         var company = companies.FirstOrDefault(c => c.Id == selected.CompanyId);
         var situation = situations.FirstOrDefault(s => s.Id == selected.SituationId);
@@ -290,15 +292,24 @@ public partial class CorrespondenceEntryWindow : Window {
         CompanyComboBox.Text = company?.Name ?? "";
         RelationshipComboBox.SelectedIndex = person != null ? (int)person.Relationship : 0;
         SituationComboBox.Text = situation?.Title ?? "";
-        // Set reply direction (opposite or outgoing if mutual)
+
+        // Reverses the direction from Incoming --> Outgoing / Outgoing --> Incoming
         DirectionComboBox.SelectedIndex = selected.Direction == InteractionDirection.Incoming
                                           ? (int)InteractionDirection.Outgoing
                                           : selected.Direction == InteractionDirection.Outgoing
                                               ? (int)InteractionDirection.Incoming
                                               : (int)InteractionDirection.Outgoing;
+
+        // Match the correspondence type to bounce FAO
         InteractionTypeComboBox.SelectedIndex = (int)selected.Type;
         NotesTextBox.Text = "";
+
         SetFormReadonly(false);
         HistoryList.SelectedItem = null;
+
+        // Loads recent interactions with person / switch straight to write-up interaction notes
+        LoadInteractionHistory();
+        NotesTextBox.Focus();
     }
+
 }

@@ -67,7 +67,8 @@
                 <!-- Situation description and meta -->
                 <StackPanel Grid.Row="0" Margin="0 0 0 4">
                     <TextBlock Text="{Binding ElementName=SituationsList, Path=SelectedItem.Description}" 
-                               TextWrapping="Wrap" Foreground="Gray"/>
+           TextWrapping="Wrap" Foreground="Black"/>
+
                     <TextBlock FontSize="10" Foreground="Gray"
                                Text="{Binding ElementName=SituationsList, Path=SelectedItem.Created, StringFormat=Created: {0:yyyy-MM-dd}}"/>
                     <TextBlock x:Name="ClosedText" FontSize="10" Foreground="Gray"

@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+//  Crypto - Static AEAD crypographic functions for
+//  Black Book - Personal Contacts Manager
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 

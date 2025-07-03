@@ -24,7 +24,8 @@
                    Grid.Row="0" Grid.Column="0" Margin="0 0 8 0"/>
         <ComboBox x:Name="ProfileList" Grid.Row="0" Grid.Column="1" 
                   Margin="0,3,0,9"
-                  MinWidth="200"/>
+                  MinWidth="200"
+                  SelectionChanged="ProfileList_SelectionChanged"/>
 
         <!-- Password input -->
         <TextBlock Text="Password:" VerticalAlignment="Center" Grid.Column="0" Margin="-2,0,11,0" Height="20" Grid.Row="2"/>

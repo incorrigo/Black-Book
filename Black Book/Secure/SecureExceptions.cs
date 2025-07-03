@@ -1,4 +1,5 @@
-﻿// SecureExceptions.cs
+﻿/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+// Secure Exceptions - Exceptions for secure operations in Black Book
 using System;
 
 namespace BlackBook.Security;

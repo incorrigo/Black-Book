@@ -44,7 +44,7 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <TextBlock Text="Description:" Grid.Row="2" Grid.Column="0" Margin="0 4 0 0" VerticalAlignment="Top"/>
+        <TextBlock Text="Description:" Grid.Row="2" Grid.Column="0" Margin="0,25,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="DescBox" Grid.Row="2" Grid.Column="1" Margin="0 2 0 4"
                  AcceptsReturn="True" Height="80" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
 

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace BlackBook.Views {
     public partial class InitialLoginWindow : Window {
@@ -20,6 +21,10 @@ namespace BlackBook.Views {
 
         private void Cancel_Click (object sender, RoutedEventArgs e) {
             this.Close();
+        }
+
+        private void ProfileList_SelectionChanged (object sender, SelectionChangedEventArgs e) {
+            PasswordInput.Focus();
         }
 
         private async void Unlock_Click (object sender, RoutedEventArgs e) {
