@@ -116,8 +116,9 @@ public partial class CorrespondenceEntryWindow : Window {
         if (string.IsNullOrWhiteSpace(PersonComboBox.Text) ||
             string.IsNullOrWhiteSpace(NotesTextBox.Text)) {
             MessageBox.Show(
-                "Please fill out all required fields (Person and Notes).",
-                "Incomplete",
+                "Correspondence must have a named person and notes about the encounter\r\n" +
+                "\r\nIf the person doesn't exist, it will be created for you",
+                "Black Book",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
@@ -135,15 +136,16 @@ public partial class CorrespondenceEntryWindow : Window {
         person.Relationship = (RelationshipType)RelationshipComboBox.SelectedIndex;
 
         // ─── 3) Optional Company ───────────────────────────────────────────────
+        Company? company = null;  // Declare explicitly here
         var companyName = CompanyComboBox.Text.Trim();
         if (!string.IsNullOrEmpty(companyName)) {
-            var existing = companies
+            company = companies
                 .FirstOrDefault(c => c.Name.Equals(companyName, StringComparison.OrdinalIgnoreCase));
-            if (existing == null) {
-                existing = new Company { Name = companyName };
-                companies.Add(existing);
+            if (company == null) {
+                company = new Company { Name = companyName };
+                companies.Add(company);
             }
-            person.CompanyId = existing.Id;
+            person.CompanyId = company.Id;
         }
         else {
             person.CompanyId = null;
@@ -198,7 +200,7 @@ public partial class CorrespondenceEntryWindow : Window {
         }
         catch (Exception ex) {
             MessageBox.Show($"Failed to save data:\n{ex.Message}",
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            "Black Book", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
@@ -216,11 +218,18 @@ public partial class CorrespondenceEntryWindow : Window {
         }
 
         // ─── 8) Done! Close window ─────────────────────────────────────────────
-        MessageBox.Show("Correspondence saved successfully.", "Saved",
+
+        // Force UI refresh for the selected person, company, and situation
+        person?.NotifyListsChanged();
+        company?.NotifyListsChanged();
+        situation?.NotifyListsChanged();
+
+        MessageBox.Show("Your correspondence has been filed", "Black Book",
                         MessageBoxButton.OK, MessageBoxImage.Information);
         DialogResult = true;
         Close();
     }
+
 
 
 

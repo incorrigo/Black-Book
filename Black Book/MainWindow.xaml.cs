@@ -1,7 +1,8 @@
 ﻿// MainWindow.xaml.cs
-using System.Windows;
-using System.IO;
 using BlackBook.Models;
+using System.IO;
+using System.Windows;
+using System.Windows.Data;
 
 namespace BlackBook.Views;
 
@@ -99,9 +100,39 @@ public partial class MainWindow : Window {
     private async void NewInteraction_Click (object sender, RoutedEventArgs e) {
         var interactionWindow = new CorrespondenceEntryWindow();
         interactionWindow.Owner = this;
-        interactionWindow.ShowDialog();
-        // Data bindings will update automatically if new correspondence was saved
+
+        bool? result = interactionWindow.ShowDialog();
+
+        if (result == true) {
+            // Refresh the main collections to ensure the UI binds freshly
+            CollectionViewSource.GetDefaultView(SessionManager.Data!.People).Refresh();
+            CollectionViewSource.GetDefaultView(SessionManager.Data!.Companies).Refresh();
+            CollectionViewSource.GetDefaultView(SessionManager.Data!.Situations).Refresh();
+
+            // Update the interaction list in the people manager tab
+            if (PeopleManagerView.PeopleList.SelectedItem is Person selectedPerson) {
+                selectedPerson.NotifyListsChanged(); // Ensure UI reflects updated data
+                PeopleManagerView.SelectPerson(null);
+                PeopleManagerView.SelectPerson(selectedPerson);
+            }
+
+            // Log this into the situation manager
+            if (SituationManagerView.SituationsList.SelectedItem is Situation selectedSituation) {
+                selectedSituation.NotifyListsChanged(); // Notify situation data changes
+                SituationManagerView.SelectSituation(null);
+                SituationManagerView.SelectSituation(selectedSituation);
+            }
+
+            // Update the interaction list in the company manager tab
+            if (CompanyManagerView.CompanyList.SelectedItem is Company selectedCompany) {
+                selectedCompany.NotifyListsChanged(); // Notify company data changes
+                CompanyManagerView.SelectCompany(null);
+                CompanyManagerView.SelectCompany(selectedCompany);
+            }
+        }
     }
+
+
 
     private void ChangePassword_Click (object sender, RoutedEventArgs e) {
         var cpWindow = new ChangePasswordWindow();

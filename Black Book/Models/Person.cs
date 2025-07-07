@@ -1,7 +1,10 @@
 ﻿// Models/Person.cs
+using BlackBook.Models;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace BlackBook.Models {
+namespace BlackBook.Models; 
     public partial class Person {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
@@ -18,5 +21,17 @@ namespace BlackBook.Models {
         Friendly,
         Neutral,
         Adversarial
+    }
+
+public partial class Person : INotifyPropertyChanged {
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged ([CallerMemberName] string? name = null) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    public void NotifyListsChanged () {
+        OnPropertyChanged(nameof(Interactions));
+        OnPropertyChanged(nameof(Situations));
+        OnPropertyChanged(nameof(Company));
     }
 }
