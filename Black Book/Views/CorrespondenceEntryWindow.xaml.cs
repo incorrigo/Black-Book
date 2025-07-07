@@ -112,7 +112,6 @@ public partial class CorrespondenceEntryWindow : Window {
     }
 
     private async void Save_Click (object sender, RoutedEventArgs e) {
-        // This is a big one so it's sort of divided into sections
         // ─── 1) Validate required fields ───────────────────────────────────────
         if (string.IsNullOrWhiteSpace(PersonComboBox.Text) ||
             string.IsNullOrWhiteSpace(NotesTextBox.Text)) {
