@@ -87,6 +87,8 @@ public partial class CorrespondenceEntryWindow : Window {
     }
 
     private void HistoryList_SelectionChanged (object sender, SelectionChangedEventArgs e) {
+
+        ReplyButton.IsEnabled = HistoryList.SelectedItem != null;
         if (HistoryList.SelectedItem is not Interaction selected) {
             return;
         }

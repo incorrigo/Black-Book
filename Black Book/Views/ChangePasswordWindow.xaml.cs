@@ -47,17 +47,17 @@ public partial class ChangePasswordWindow : Window {
         string currentPw = CurrentPasswordBox.Password;
         string newPw = NewPasswordBox.Password;
         if (string.IsNullOrWhiteSpace(currentPw) || string.IsNullOrWhiteSpace(newPw)) {
-            MessageBox.Show("All fields are required.", "Incomplete",
+            MessageBox.Show("You need to enter all the details", "Change Password",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
         if (currentPw != SessionManager.CurrentPassword) {
-            MessageBox.Show("Current password is incorrect.", "Error",
-                            MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("The current password you entered is incorrect", "Change Password",
+                            MessageBoxButton.OK, MessageBoxImage.None);
             return;
         }
         if (!passwordsMatch) {
-            MessageBox.Show("New passwords do not match.", "Error",
+            MessageBox.Show("Both of the new passwords must match", "Confirm Password",
                             MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
@@ -79,7 +79,7 @@ public partial class ChangePasswordWindow : Window {
                             MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
-        MessageBox.Show("Password changed successfully.", "Success",
+        MessageBox.Show("Your password has now been changed", "Black Book",
                         MessageBoxButton.OK, MessageBoxImage.Information);
         DialogResult = true;
         Close();

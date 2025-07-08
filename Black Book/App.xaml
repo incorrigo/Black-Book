@@ -20,7 +20,7 @@
         <converters:InteractionTypeFriendlyConverter x:Key="InteractionTypeFriendlyConverter"/>
         <converters:NoteTruncationConverter x:Key="NoteTruncationConverter" />
         <converters:InteractionDirectionFriendlyConverter x:Key="InteractionDirectionFriendlyConverter"/>
-
+        <converters:InteractionTypeBrushConverter x:Key="InteractionTypeBrushConverter"/>
     </Application.Resources>
 
 </Application>

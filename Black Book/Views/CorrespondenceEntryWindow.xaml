@@ -103,30 +103,42 @@
             <!-- history + send‑response -->
             <DockPanel Grid.Column="1" Margin="10 0 0 0" VerticalAlignment="Bottom">
                 <ListBox x:Name="HistoryList"
-                         DockPanel.Dock="Top"
-                         Height="259"
-                         FontSize="12">
+                    DockPanel.Dock="Top"
+                    Height="259"
+                    FontSize="12"
+                    SelectionChanged="HistoryList_SelectionChanged">
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type models:Interaction}">
-                            <StackPanel Orientation="Horizontal" Margin="0 1">
-                                <TextBlock Text="{Binding Timestamp,
-                                           StringFormat={}{0:yyyy-MM-dd HH:mm}}"
-                                           Margin="0 0 4 0"/>
-                                <TextBlock Text="—" Margin="0 0 4 0"/>
-                                <TextBlock Text="{Binding Notes}"
-                                           Width="160"
-                                           TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding Converter={StaticResource InteractionPartiesConverter}}"
-           Width="160" TextTrimming="CharacterEllipsis"/>
-
+                        <DataTemplate>
+                            <StackPanel Margin="0,4">
+                                <TextBlock FontWeight="Bold" FontSize="12">
+                    <Run Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd [dddd] - HH:mm}}" />
+                                </TextBlock>
+                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0"
+                             Fill="{Binding Type, Converter={StaticResource InteractionTypeBrushConverter}}" />
+                                    <TextBlock FontWeight="Bold" Foreground="#000"
+                               Text="{Binding Type, Converter={StaticResource InteractionTypeFriendlyConverter}}" />
+                                    <TextBlock Text=" – " FontWeight="SemiBold" />
+                                    <TextBlock FontStyle="Italic"
+                               Text="{Binding Converter={StaticResource InteractionPartiesConverter}}" />
+                                </StackPanel>
+                                <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Id}" />
+                                <TextBlock Text="{Binding Notes, Converter={StaticResource NoteTruncationConverter}}"
+                           TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"
+                           MaxWidth="220"
+                           Margin="0,2,0,0"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <Button x:Name="ReplyButton" Content="Send Response"
+
+                <Button x:Name="ReplyButton" Content="Bounce FAO"
                         Margin="0 6 0 0"
-                        Click="ReplyToSelected_Click" Height="37"/>
+                        Click="ReplyToSelected_Click" Height="37"
+                        IsEnabled="False"/>
+
             </DockPanel>
         </Grid>
 

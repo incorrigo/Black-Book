@@ -32,7 +32,7 @@ public partial class CompanyEntryWindow : Window {
 
     private async void Save_Click (object sender, RoutedEventArgs e) {
         if (string.IsNullOrWhiteSpace(NameBox.Text)) {
-            MessageBox.Show("Company name is required.", "Incomplete",
+            MessageBox.Show("A company needs to have a name", "New Company",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
@@ -66,9 +66,9 @@ public partial class CompanyEntryWindow : Window {
                             "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
-        MessageBox.Show(editingCompany != null ? "Company updated successfully."
-                                               : "Company added successfully.",
-                        "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show(editingCompany != null ? "The updated company details have been filed"
+                                               : "Your new company has been filed",
+                        "Black Book", MessageBoxButton.OK, MessageBoxImage.None);
         DialogResult = true;
         Close();
     }
