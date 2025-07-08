@@ -19,6 +19,7 @@
         <converters:InteractionPartiesConverter     x:Key="InteractionPartiesConverter"/>
         <converters:InteractionTypeFriendlyConverter x:Key="InteractionTypeFriendlyConverter"/>
         <converters:NoteTruncationConverter x:Key="NoteTruncationConverter" />
+        <converters:InteractionDirectionFriendlyConverter x:Key="InteractionDirectionFriendlyConverter"/>
 
     </Application.Resources>
 

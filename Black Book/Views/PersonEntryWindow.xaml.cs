@@ -38,8 +38,8 @@ public partial class PersonEntryWindow : Window {
 
     private async void Save_Click (object sender, RoutedEventArgs e) {
         if (string.IsNullOrWhiteSpace(NameBox.Text)) {
-            MessageBox.Show("Name is required.", "Incomplete",
-                            MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("You must give the person a name", "Black Book",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
         // Resolve or create associated Company if provided
@@ -86,9 +86,9 @@ public partial class PersonEntryWindow : Window {
                             MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
-        MessageBox.Show(editingPerson != null ? "Person details updated successfully."
-                                              : "Person added successfully.",
-                        "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show(editingPerson != null ? $"Your details for {editingPerson.Name} have been updated"
+                                              : $"New contact '{NameBox.Text.Trim()}' has been filed",
+                        "Black Book", MessageBoxButton.OK, MessageBoxImage.Information);
         DialogResult = true;
         Close();
     }

@@ -11,7 +11,7 @@ public partial class MainWindow : Window {
         InitializeComponent();
         DataContext = SessionManager.Data;
 
-        // After the window has loaded, set its initial size as the minimum allowed size
+        // Design size is minimum size
         this.Loaded += (sender, e) => {
             this.MinWidth = this.ActualWidth;
             this.MinHeight = this.ActualHeight;

@@ -9,12 +9,12 @@ namespace BlackBook.Converters {
         public object Convert (object value, Type _, object __, CultureInfo ___)
             => value switch {
                 InteractionType.Email => "Email",
-                InteractionType.PhoneCall => "Call",
-                InteractionType.TextMessage => "SMS",
+                InteractionType.PhoneCall => "Phone Call",
+                InteractionType.TextMessage => "Text Message",
                 InteractionType.InPersonMeeting => "Meeting",
-                InteractionType.VideoConference => "Video",
-                InteractionType.PostalMail => "Mail",
-                InteractionType.SocialMedia => "Social",
+                InteractionType.VideoConference => "Video Call",
+                InteractionType.PostalMail => "Letter",
+                InteractionType.SocialMedia => "Social Media Post",
                 _ => string.Empty
             };
 

@@ -45,8 +45,9 @@ public partial class PeopleManager : UserControl {
 
     private async void DeletePerson_Click (object sender, RoutedEventArgs e) {
         if (PeopleList.SelectedItem is Person person) {
-            var confirm = MessageBox.Show($"Are you sure you want to delete {person.Name} and all related correspondence?",
-                                          "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var confirm = MessageBox.Show($"Delete {person.Name}\r\n" +
+                $"\r\nand all related correspondence?",
+                                          "Black Book", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
             // Remove all interactions involving this person
             var toRemove = SessionManager.Data!.Interactions.Where(i => i.PersonId == person.Id).ToList();
@@ -65,7 +66,7 @@ public partial class PeopleManager : UserControl {
                 MessageBox.Show($"Failed to save data:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            MessageBox.Show("Person deleted successfully.", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"{person.Name} has been deleted", "Black Book", MessageBoxButton.OK, MessageBoxImage.None);
             // Clear selection
             PeopleList.SelectedItem = null;
         }

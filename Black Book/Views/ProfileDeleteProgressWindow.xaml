@@ -2,7 +2,7 @@
 <Window x:Class="BlackBook.Views.ProfileDeleteProgressWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Deleting Profile"
+        Title="Black Book"
         Width="350" Height="120"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"

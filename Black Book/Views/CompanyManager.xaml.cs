@@ -50,12 +50,13 @@ public partial class CompanyManager : UserControl {
             bool hasContacts = SessionManager.Data!.People.Any(p => p.CompanyId == company.Id);
             bool hasInteractions = SessionManager.Data.Interactions.Any(i => i.CompanyId == company.Id);
             if (hasContacts || hasInteractions) {
-                MessageBox.Show("Cannot delete a company that has associated contacts or correspondence.",
-                                "Cannot Delete", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("This company is linked to contacts and correspondence\r\n" +
+                            "\r\nIt cannot be deleted until these links have been removed",
+                                "Black Book", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            var confirm = MessageBox.Show($"Are you sure you want to delete {company.Name}?",
-                                          "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var confirm = MessageBox.Show($"Permanently delete {company.Name}?",
+                                          "Delete Company", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (confirm != MessageBoxResult.Yes) return;
             SessionManager.Data.Companies.Remove(company);
             try {
@@ -68,7 +69,7 @@ public partial class CompanyManager : UserControl {
                 MessageBox.Show($"Failed to save data:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            MessageBox.Show("Company deleted successfully.", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Company \"{company.Name}\" has been deleted", "Black Book", MessageBoxButton.OK, MessageBoxImage.None);
         }
     }
 

@@ -14,10 +14,10 @@ public partial class Situation {
 }
 
 public enum SituationStatus {
-    AdHoc,
-    New,
-    Ongoing,
-    DoneWith
+    New,        // These status settings
+    Ongoing,    // are ordered to make
+    AdHoc,      // the colour grouping
+    DoneWith    // in situation manager
 }
 
 // This is for the "correspondence doesn't update correspondence list" problem

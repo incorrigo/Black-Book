@@ -116,11 +116,11 @@ public partial class CorrespondenceEntryWindow : Window {
         if (string.IsNullOrWhiteSpace(PersonComboBox.Text) ||
             string.IsNullOrWhiteSpace(NotesTextBox.Text)) {
             MessageBox.Show(
-                "Correspondence must have a named person and notes about the encounter\r\n" +
-                "\r\nIf the person doesn't exist, it will be created for you",
+                "You need to give a name and notes about the encounter\r\n" +
+                "\r\nAnything that doesn't exist will be created for you. Just type it in ...",
                 "Black Book",
                 MessageBoxButton.OK,
-                MessageBoxImage.Warning);
+                MessageBoxImage.Information);
             return;
         }
 
@@ -160,7 +160,7 @@ public partial class CorrespondenceEntryWindow : Window {
             if (situation == null) {
                 situation = new Situation {
                     Title = situationTitle,
-                    Status = SituationStatus.Ongoing
+                    Status = SituationStatus.New
                 };
                 situations.Add(situation);
             }
@@ -170,8 +170,9 @@ public partial class CorrespondenceEntryWindow : Window {
                 .FirstOrDefault(s => s.Title.Equals("AdHoc", StringComparison.OrdinalIgnoreCase));
             if (situation == null) {
                 situation = new Situation {
-                    Title = "AdHoc",
-                    Status = SituationStatus.Ongoing
+                    Title = "Untitled Situation",
+                    Status = SituationStatus.New,
+                    Description = "No description specified"
                 };
                 situations.Add(situation);
             }

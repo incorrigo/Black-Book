@@ -12,10 +12,10 @@ public sealed class StatusBrushConverter : IValueConverter {
         if (value is not SituationStatus s) return Brushes.Gray;
 
         return s switch {
-            SituationStatus.AdHoc => new SolidColorBrush(Color.FromRgb(180, 180, 180)), // grey
-            SituationStatus.New => new SolidColorBrush(Color.FromRgb(70, 195, 255)), // sky‑blue
-            SituationStatus.Ongoing => new SolidColorBrush(Color.FromRgb(255, 190, 70)), // amber
-            SituationStatus.DoneWith => new SolidColorBrush(Color.FromRgb(120, 200, 120)), // green
+            SituationStatus.AdHoc => new SolidColorBrush(Color.FromRgb(180, 180, 180)),         // grey
+            SituationStatus.New => new SolidColorBrush(Color.FromRgb(255, 0, 0)),               // red
+            SituationStatus.Ongoing => new SolidColorBrush(Color.FromRgb(0, 0, 255)),           // blue
+            SituationStatus.DoneWith => new SolidColorBrush(Color.FromRgb(0, 0, 0)),            // black
             _ => Brushes.Gray
         };
     }

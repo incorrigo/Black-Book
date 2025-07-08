@@ -76,6 +76,12 @@ public partial class SituationEntryWindow : Window {
                                                  : "Situation added successfully.",
                         "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         DialogResult = true;
+
+        // This function groups the situation list by colour
+        // Red = New, Blue = Ongoing, Grey = Ad Hoc, Black = Done With
+        var mainWin = (MainWindow)Owner;
+        mainWin.SituationManagerView.RefreshGrouping();
+
         Close();
     }
 }
