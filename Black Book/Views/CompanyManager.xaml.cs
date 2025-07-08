@@ -103,4 +103,25 @@ public partial class CompanyManager : UserControl {
             mainWin.MainTabControl.SelectedIndex = 0;
         }
     }
+
+    private void InteractionList_MouseDoubleClick (object sender, MouseButtonEventArgs e) {
+        if (InteractionList.SelectedItem is Interaction interaction) {
+            var reader = new InteractionReader(interaction, SessionManager.Data!);
+            reader.Owner = Window.GetWindow(this);
+            reader.ShowDialog();
+        }
+    }
+
+    private void InteractionList_PreviewMouseWheel (object sender, MouseWheelEventArgs e) {
+        if (!e.Handled) {
+            e.Handled = true;
+            var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta) {
+                RoutedEvent = UIElement.MouseWheelEvent,
+                Source = sender
+            };
+            ((Control)sender).RaiseEvent(eventArg);
+        }
+    }
+
+
 }

@@ -225,7 +225,7 @@ public partial class CorrespondenceEntryWindow : Window {
         situation?.NotifyListsChanged();
 
         MessageBox.Show("Your correspondence has been filed", "Black Book",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBoxButton.OK, MessageBoxImage.None);
         DialogResult = true;
         Close();
     }

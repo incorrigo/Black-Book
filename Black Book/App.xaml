@@ -18,6 +18,8 @@
         <converters:StatusBrushConverter x:Key="StatusBrushConverter" />
         <converters:InteractionPartiesConverter     x:Key="InteractionPartiesConverter"/>
         <converters:InteractionTypeFriendlyConverter x:Key="InteractionTypeFriendlyConverter"/>
+        <converters:NoteTruncationConverter x:Key="NoteTruncationConverter" />
+
     </Application.Resources>
 
 </Application>

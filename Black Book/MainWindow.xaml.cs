@@ -10,9 +10,14 @@ public partial class MainWindow : Window {
     public MainWindow () {
         InitializeComponent();
         DataContext = SessionManager.Data;
-        this.MinWidth = 600;
-        this.MinHeight = 400;
+
+        // After the window has loaded, set its initial size as the minimum allowed size
+        this.Loaded += (sender, e) => {
+            this.MinWidth = this.ActualWidth;
+            this.MinHeight = this.ActualHeight;
+        };
     }
+
 
     private void CloseProfile_Click (object sender, RoutedEventArgs e) {
         new InitialLoginWindow().Show();

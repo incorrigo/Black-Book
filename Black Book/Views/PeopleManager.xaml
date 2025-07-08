@@ -122,32 +122,37 @@
 
                     <TextBlock Margin="0 10 0 4" FontStyle="Italic" Text="Recent Interactions:"/>
                     <ListBox x:Name="InteractionList"
-                             ItemsSource="{Binding ElementName=PeopleList,
-                                                   Path=SelectedItem.Interactions}">
+                        ItemsSource="{Binding ElementName=PeopleList, Path=SelectedItem.Interactions}"
+                        MouseDoubleClick="InteractionList_MouseDoubleClick"
+                        PreviewMouseWheel="InteractionList_PreviewMouseWheel">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="0 4 0 4">
-                                    <TextBlock FontWeight="Bold"
-                                               Text="{Binding Timestamp,
-                                                              StringFormat={}{0:yyyy-MM-dd [dddd] - HH:mm}}"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
-                                        <Ellipse Width="8" Height="8" Margin="0 0 6 0"
-                                                 VerticalAlignment="Center"
-                                                 Fill="{Binding Direction,
-                                                                Converter={StaticResource DirectionColorConverter}}"/>
-                                        <TextBlock Text="{Binding Type,
-                                                            Converter={StaticResource InteractionTypeFriendlyConverter}}"
-                                                   FontWeight="SemiBold"/>
-                                        <TextBlock Text=" – " FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding Converter={StaticResource InteractionPartiesConverter}}"
-                                                   FontStyle="Italic"/>
+                                <StackPanel Margin="0,4">
+                                    <TextBlock FontWeight="Bold" FontSize="12">
+                <Run Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd [dddd] - HH:mm}}" />
+                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                        <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0"
+                         Fill="{Binding Direction, Converter={StaticResource DirectionColorConverter}}" />
+                                        <TextBlock FontWeight="Bold" Foreground="#000"
+                           Text="{Binding Type, Converter={StaticResource InteractionTypeFriendlyConverter}}" />
+                                        <TextBlock Text=" – " FontWeight="SemiBold" />
+                                        <TextBlock FontStyle="Italic"
+                           Text="{Binding Converter={StaticResource InteractionPartiesConverter}}" />
                                     </StackPanel>
-                                    <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Id}"/>
-                                    <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0 2 0 0"/>
+                                    <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Id}" />
+                                    <TextBlock
+                                        Text="{Binding Notes, Converter={StaticResource NoteTruncationConverter}}"
+                                        TextWrapping="Wrap"
+                                         TextTrimming="CharacterEllipsis"
+                                         MaxWidth="400"
+                                        Margin="0,2,0,0"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
+
                     </ListBox>
+
 
                 </StackPanel>
             </ScrollViewer>

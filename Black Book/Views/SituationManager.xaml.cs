@@ -103,4 +103,13 @@ public partial class SituationManager : UserControl {
             mainWin.MainTabControl.SelectedIndex = 0;
         }
     }
+
+    private void HistoryList_MouseDoubleClick (object sender, MouseButtonEventArgs e) {
+        if (HistoryList.SelectedItem is Interaction interaction) {
+            var reader = new InteractionReader(interaction, SessionManager.Data!);
+            reader.Owner = Window.GetWindow(this);
+            reader.ShowDialog();
+        }
+    }
+
 }
