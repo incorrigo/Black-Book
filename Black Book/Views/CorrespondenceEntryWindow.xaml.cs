@@ -114,9 +114,7 @@ public partial class CorrespondenceEntryWindow : Window {
     }
 
     private async void Save_Click (object sender, RoutedEventArgs e) {
-        // ─── 1) Validate required fields ───────────────────────────────────────
-        if (string.IsNullOrWhiteSpace(PersonComboBox.Text) ||
-            string.IsNullOrWhiteSpace(NotesTextBox.Text)) {
+        if (string.IsNullOrWhiteSpace(PersonComboBox.Text) || string.IsNullOrWhiteSpace(NotesTextBox.Text)) {
             MessageBox.Show(
                 "You need to give a name and notes about the encounter\r\n" +
                 "\r\nAnything that doesn't exist will be created for you. Just type it in ...",
@@ -126,65 +124,66 @@ public partial class CorrespondenceEntryWindow : Window {
             return;
         }
 
-        // ─── 2) Resolve or create Person ──────────────────────────────────────
-        var personName = PersonComboBox.Text.Trim();
-        var person = people
-            .FirstOrDefault(p => p.Name.Equals(personName, StringComparison.OrdinalIgnoreCase));
-        if (person == null) {
-            person = new Person { Name = personName };
-            people.Add(person);
+        // ─── Situation explicitly resolved first ────
+        Situation situation;
+        var situationTitle = SituationComboBox.Text.Trim();
+        if (!string.IsNullOrEmpty(situationTitle)) {
+            situation = situations.FirstOrDefault(s => s.Title.Equals(situationTitle, StringComparison.OrdinalIgnoreCase))
+                        ?? new Situation {
+                            Title = situationTitle,
+                            Status = SituationStatus.New
+                        };
+            if (!situations.Contains(situation)) situations.Add(situation);
         }
-        // update relationship to whatever the user has selected
+        else {
+            situation = situations.FirstOrDefault(s => s.Title.Equals("AdHoc", StringComparison.OrdinalIgnoreCase))
+                        ?? new Situation {
+                            Title = "Untitled Situation",
+                            Status = SituationStatus.New,
+                            Description = "No description specified"
+                        };
+            if (!situations.Contains(situation)) situations.Add(situation);
+        }
+
+        // ─── Objective explicitly resolved second ────
+        Objective objective = null;
+        var objectiveTitle = ObjectiveComboBox.Text.Trim();
+        if (!string.IsNullOrWhiteSpace(objectiveTitle)) {
+            objective = data.Objectives.FirstOrDefault(o => o.Title.Equals(objectiveTitle, StringComparison.OrdinalIgnoreCase))
+                        ?? new Objective {
+                            Title = objectiveTitle,
+                            SituationId = situation.Id,
+                            Created = DateTime.UtcNow
+                        };
+            if (!data.Objectives.Contains(objective)) data.Objectives.Add(objective);
+        }
+
+        // ─── Person explicitly resolved third ────
+        var personName = PersonComboBox.Text.Trim();
+        var person = people.FirstOrDefault(p => p.Name.Equals(personName, StringComparison.OrdinalIgnoreCase))
+                     ?? new Person { Name = personName };
+        if (!people.Contains(person)) people.Add(person);
         person.Relationship = (RelationshipType)RelationshipComboBox.SelectedIndex;
 
-        // ─── 3) Optional Company ───────────────────────────────────────────────
-        Company? company = null;  // Declare explicitly here
+        // ─── Company explicitly resolved fourth ────
+        Company company = null;
         var companyName = CompanyComboBox.Text.Trim();
         if (!string.IsNullOrEmpty(companyName)) {
-            company = companies
-                .FirstOrDefault(c => c.Name.Equals(companyName, StringComparison.OrdinalIgnoreCase));
-            if (company == null) {
-                company = new Company { Name = companyName };
-                companies.Add(company);
-            }
+            company = companies.FirstOrDefault(c => c.Name.Equals(companyName, StringComparison.OrdinalIgnoreCase))
+                      ?? new Company { Name = companyName };
+            if (!companies.Contains(company)) companies.Add(company);
             person.CompanyId = company.Id;
         }
         else {
             person.CompanyId = null;
         }
 
-        // ─── 4) Resolve or create Situation ──────────────────────────────────
-        Situation situation;
-        var situationTitle = SituationComboBox.Text.Trim();
-        if (!string.IsNullOrEmpty(situationTitle)) {
-            situation = situations
-                .FirstOrDefault(s => s.Title.Equals(situationTitle, StringComparison.OrdinalIgnoreCase));
-            if (situation == null) {
-                situation = new Situation {
-                    Title = situationTitle,
-                    Status = SituationStatus.New
-                };
-                situations.Add(situation);
-            }
-        }
-        else {
-            situation = situations
-                .FirstOrDefault(s => s.Title.Equals("AdHoc", StringComparison.OrdinalIgnoreCase));
-            if (situation == null) {
-                situation = new Situation {
-                    Title = "Untitled Situation",
-                    Status = SituationStatus.New,
-                    Description = "No description specified"
-                };
-                situations.Add(situation);
-            }
-        }
-
-        // ─── 5) Create and add the Interaction ────────────────────────────────
+        // ─── Explicitly create Interaction last ────
         var interaction = new Interaction {
             PersonId = person.Id,
-            CompanyId = person.CompanyId,  // may be null
+            CompanyId = person.CompanyId,
             SituationId = situation.Id,
+            ObjectiveId = objective?.Id,
             Direction = (InteractionDirection)DirectionComboBox.SelectedIndex,
             Type = (InteractionType)InteractionTypeComboBox.SelectedIndex,
             Notes = NotesTextBox.Text.Trim(),
@@ -192,7 +191,6 @@ public partial class CorrespondenceEntryWindow : Window {
         };
         interactions.Add(interaction);
 
-        // ─── 6) Persist to disk ────────────────────────────────────────────────
         try {
             await SecureProfileManager.SaveProfileAsync(
                 SessionManager.CurrentUserName,
@@ -203,38 +201,23 @@ public partial class CorrespondenceEntryWindow : Window {
         }
         catch (Exception ex) {
             MessageBox.Show($"Failed to save data:\n{ex.Message}",
-                            "Black Book", MessageBoxButton.OK, MessageBoxImage.Error);
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
-        // ─── 7) Refresh UI bindings ────────────────────────────────────────────
-        var cvsSituations = CollectionViewSource.GetDefaultView(SessionManager.Data!.Situations);
-        var cvsInteractions = CollectionViewSource.GetDefaultView(SessionManager.Data.Interactions);
-        cvsSituations.Refresh();
-        cvsInteractions.Refresh();
-
-        // Force the impacted Situation to raise PropertyChanged on its child collections
-        if (interaction.SituationId != Guid.Empty) {
-            var sit = SessionManager.Data.Situations
-                        .FirstOrDefault(s => s.Id == interaction.SituationId);
-            sit?.NotifyListsChanged();
-        }
-
-        // ─── 8) Done! Close window ─────────────────────────────────────────────
-
-        // Force UI refresh for the selected person, company, and situation
+        CollectionViewSource.GetDefaultView(situations).Refresh();
+        CollectionViewSource.GetDefaultView(interactions).Refresh();
         person?.NotifyListsChanged();
         company?.NotifyListsChanged();
-        situation?.NotifyListsChanged();
+        situation.NotifyListsChanged();
+        objective?.NotifyListsChanged();
 
         MessageBox.Show("Your correspondence has been filed", "Black Book",
-                        MessageBoxButton.OK, MessageBoxImage.None);
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+
         DialogResult = true;
         Close();
     }
-
-
-
 
 
     private void ReplyToSelected_Click (object sender, RoutedEventArgs e) {

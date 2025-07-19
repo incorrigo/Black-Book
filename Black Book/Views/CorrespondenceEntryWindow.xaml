@@ -5,79 +5,73 @@
         xmlns:models="clr-namespace:BlackBook.Models"
         xmlns:helpers="clr-namespace:BlackBook.Helpers"
         Title="Enter Correspondence"
-        Width="620" Height="540"
+        Width="620" Height="620"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner" FontFamily="Verdana">
+        WindowStartupLocation="CenterOwner"
+        FontFamily="Verdana">
 
-    <!-- ╭───────── page margin ─────────╮ -->
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- time‑stamp               -->
+            <!-- timestamp -->
             <RowDefinition Height="Auto"/>
-            <!-- person / company         -->
+            <!-- person/company -->
             <RowDefinition Height="Auto"/>
-            <!-- relation / dir / type    -->
+            <!-- relation/dir/type -->
             <RowDefinition Height="Auto"/>
-            <!-- situation                -->
+            <!-- situation/objective -->
             <RowDefinition Height="*"/>
-            <!-- notes + history / reply  -->
+            <!-- notes/history/reply -->
             <RowDefinition Height="Auto"/>
-            <!-- bottom buttons           -->
+            <!-- buttons -->
         </Grid.RowDefinitions>
 
-        <!-- time‑stamp -->
+        <!-- Timestamp -->
         <TextBlock x:Name="TimestampText"
                    Grid.Row="0"
                    FontSize="12"
                    HorizontalAlignment="Right"
                    Margin="0 0 0 10"/>
 
-        <!-- person / company -->
+        <!-- Person/Company -->
         <StackPanel Grid.Row="1" Margin="0 0 0 6">
             <ComboBox x:Name="PersonComboBox"
-			  IsEditable="True" ItemsSource="{Binding People}"
-			  DisplayMemberPath="Name"
-			  helpers:PlaceholderHelper.PlaceholderText="Name"/>
+                      IsEditable="True" ItemsSource="{Binding People}"
+                      DisplayMemberPath="Name"
+                      helpers:PlaceholderHelper.PlaceholderText="Name"/>
 
             <ComboBox x:Name="CompanyComboBox"
-			  Margin="0 6 0 0"
-			  IsEditable="True" ItemsSource="{Binding Companies}"
-			  DisplayMemberPath="Name"
-			  helpers:PlaceholderHelper.PlaceholderText="Company"/>
+                      Margin="0 6 0 0"
+                      IsEditable="True" ItemsSource="{Binding Companies}"
+                      DisplayMemberPath="Name"
+                      helpers:PlaceholderHelper.PlaceholderText="Company"/>
         </StackPanel>
 
-        <!-- relation / dir / type  -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0 0 0 6" HorizontalAlignment="Center">
-            <ComboBox x:Name="RelationshipComboBox" Width="110" Margin="0 0 6 0"
-			  SelectedIndex="-1" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center">
+        <!-- Relation/Direction/Type -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <ComboBox x:Name="RelationshipComboBox" Width="110" Margin="0 0 6 0" SelectedIndex="-1">
                 <ComboBoxItem Content="Unknown"/>
                 <ComboBoxItem Content="Friendly"/>
                 <ComboBoxItem Content="Neutral"/>
                 <ComboBoxItem Content="Adversarial"/>
             </ComboBox>
 
-            <ComboBox x:Name="DirectionComboBox" Width="100" Margin="0 0 6 0"
-			  SelectedIndex="2" HorizontalAlignment="Center" HorizontalContentAlignment="Center">
+            <ComboBox x:Name="DirectionComboBox" Width="100" Margin="0 0 6 0" SelectedIndex="2">
                 <ComboBoxItem Content="Incoming"/>
                 <ComboBoxItem Content="Outgoing"/>
                 <ComboBoxItem Content="Mutual"/>
             </ComboBox>
 
-            <ComboBox x:Name="InteractionTypeComboBox" Width="160"
-          SelectedIndex="1"
-          HorizontalAlignment="Center"
-          HorizontalContentAlignment="Left">
+            <ComboBox x:Name="InteractionTypeComboBox" Width="160" SelectedIndex="1">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <Ellipse Width="8" Height="8" Margin="0,0,6,0"
-                         Fill="{Binding Converter={StaticResource InteractionTypeBrushConverter}}"/>
+                                     Fill="{Binding Converter={StaticResource InteractionTypeBrushConverter}}"/>
                             <TextBlock Text="{Binding Converter={StaticResource InteractionTypeFriendlyConverter}}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
-
                 <models:InteractionType>Email</models:InteractionType>
                 <models:InteractionType>PhoneCall</models:InteractionType>
                 <models:InteractionType>TextMessage</models:InteractionType>
@@ -87,60 +81,65 @@
                 <models:InteractionType>SocialMedia</models:InteractionType>
                 <models:InteractionType>Other</models:InteractionType>
             </ComboBox>
-
         </StackPanel>
 
-        <!-- situation -->
-        <ComboBox x:Name="SituationComboBox"
-		  Grid.Row="3"
-		  IsEditable="True"
-		  ItemsSource="{Binding Situations}"
-		  DisplayMemberPath="Title"
-		  Margin="0 0 0 6"
-		  helpers:PlaceholderHelper.PlaceholderText="Situation"/>
+        <!-- Situation/Objectives -->
+        <StackPanel Grid.Row="3" Margin="0 6 0 6">
+            <ComboBox x:Name="SituationComboBox"
+                      IsEditable="True"
+                      ItemsSource="{Binding Situations}"
+                      DisplayMemberPath="Title"
+                      helpers:PlaceholderHelper.PlaceholderText="Situation"/>
 
-        <!-- notes + history + reply -->
+            <ComboBox x:Name="ObjectiveComboBox"
+                      Margin="0 6 0 0"
+                      IsEditable="True"
+                      ItemsSource="{Binding Objectives}"
+                      DisplayMemberPath="Title"
+                      helpers:PlaceholderHelper.PlaceholderText="Objective (Optional)"/>
+        </StackPanel>
+
+        <!-- Notes and History -->
         <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="270"/>
             </Grid.ColumnDefinitions>
 
-            <!-- notes -->
             <TextBox x:Name="NotesTextBox"
                      Grid.Column="0"
                      AcceptsReturn="True"
                      TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto"/>
 
-            <!-- history + send‑response -->
             <DockPanel Grid.Column="1" Margin="10 0 0 0" VerticalAlignment="Bottom">
                 <ListBox x:Name="HistoryList"
-                    DockPanel.Dock="Top"
-                    Height="259"
-                    FontSize="12"
-                    SelectionChanged="HistoryList_SelectionChanged">
+         DockPanel.Dock="Top"
+         Height="259"
+         FontSize="12"
+         SelectionChanged="HistoryList_SelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0,4">
+                                <!-- Timestamp -->
                                 <TextBlock FontWeight="Bold" FontSize="12">
-                    <Run Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd [dddd] - HH:mm}}" />
+                    <Run Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd [dddd] - HH:mm}}"/>
                                 </TextBlock>
+
+                                <!-- Interaction details -->
                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
                                     <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0"
-                             Fill="{Binding Type, Converter={StaticResource InteractionTypeBrushConverter}}" />
-                                    <TextBlock FontWeight="Bold" Foreground="#000"
-                               Text="{Binding Type, Converter={StaticResource InteractionTypeFriendlyConverter}}" />
-                                    <TextBlock Text=" – " FontWeight="SemiBold" />
+                             Fill="{Binding Type, Converter={StaticResource InteractionTypeBrushConverter}}"/>
+                                    <TextBlock FontWeight="Bold"
+                               Text="{Binding Type, Converter={StaticResource InteractionTypeFriendlyConverter}}"/>
+                                    <TextBlock Text=" – " FontWeight="SemiBold"/>
                                     <TextBlock FontStyle="Italic"
-                               Text="{Binding Converter={StaticResource InteractionPartiesConverter}}" />
+                               Text="{Binding Converter={StaticResource InteractionPartiesConverter}}"/>
                                 </StackPanel>
-                                <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Id}" />
+
+                                <!-- Notes (truncated) -->
                                 <TextBlock Text="{Binding Notes, Converter={StaticResource NoteTruncationConverter}}"
-                           TextWrapping="Wrap"
-                           TextTrimming="CharacterEllipsis"
-                           MaxWidth="220"
-                           Margin="0,2,0,0"/>
+                           TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxWidth="220"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -148,20 +147,25 @@
 
 
                 <Button x:Name="ReplyButton" Content="Bounce FAO"
-                        Margin="0 6 0 0"
-                        Click="ReplyToSelected_Click" Height="37"
+                        Height="37" Margin="0 6 0 0"
+                        Click="ReplyToSelected_Click"
                         IsEnabled="False"/>
-
             </DockPanel>
         </Grid>
 
-        <!-- bottom buttons -->
-        <StackPanel Grid.Row="5" Orientation="Horizontal"
-                    HorizontalAlignment="Right" Margin="0 10 0 0">
-            <Button Content="Cancel" Width="90" Margin="0 0 8 0"
-                    Click="Cancel_Click" IsCancel="True"/>
-            <Button x:Name="SaveButton" Content="Save" Width="90"
-                    Click="Save_Click" IsDefault="True"/>
-        </StackPanel>
+        <!-- Buttons explicitly grouped for uniformity -->
+        <Grid Grid.Row="5" Margin="0 10 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="90"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Empty ColumnDefinition explicitly centers buttons to the right -->
+            <Button Grid.Column="1" Content="Cancel" Width="90"
+                    Margin="0 0 8 0" Click="Cancel_Click" IsCancel="True"/>
+            <Button Grid.Column="2" x:Name="SaveButton" Content="Save"
+                    Width="90" Click="Save_Click" IsDefault="True"/>
+        </Grid>
     </Grid>
 </Window>

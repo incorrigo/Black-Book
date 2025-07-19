@@ -46,6 +46,14 @@ public partial class MainWindow : Window {
         }
     }
 
+    private void NewObjective_Click (object sender, RoutedEventArgs e) {
+        var objectiveWindow = new ObjectiveEntryWindow { Owner = this };
+        if (objectiveWindow.ShowDialog() == true) {
+            ObjectiveManagerView.ObjectivesList.Items.Refresh(); // explicitly refresh list
+        }
+    }
+
+
     private async void DeleteProfile_Click (object sender, RoutedEventArgs e) {
         var confirmWindow = new ProfileDeleteConfirmWindow();
         confirmWindow.Owner = this;

@@ -21,6 +21,8 @@
         <converters:NoteTruncationConverter x:Key="NoteTruncationConverter" />
         <converters:InteractionDirectionFriendlyConverter x:Key="InteractionDirectionFriendlyConverter"/>
         <converters:InteractionTypeBrushConverter x:Key="InteractionTypeBrushConverter"/>
+        <converters:PriorityToBrushConverter x:Key="PriorityToBrushConverter"/>
+        <converters:SituationIdToNameConverter x:Key="SituationIdToNameConverter"/>
     </Application.Resources>
 
 </Application>

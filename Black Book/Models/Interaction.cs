@@ -12,6 +12,7 @@ public partial class Interaction {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid PersonId { get; set; }
     public Guid? CompanyId { get; set; }
+    public Guid? ObjectiveId { get; set; }
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     public InteractionDirection Direction { get; set; }
     public InteractionType Type { get; set; }

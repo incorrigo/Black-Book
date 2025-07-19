@@ -8,7 +8,7 @@
         WindowStartupLocation="CenterScreen">
 
     <DockPanel>
-        <!-- Menu Bar -->
+        <!-- Explicitly updated Menu Bar -->
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="Close Profile" Click="CloseProfile_Click"/>
@@ -20,26 +20,31 @@
                 <MenuItem Header="E_xit" Click="Exit_Click"/>
             </MenuItem>
 
-
             <MenuItem Header="_New">
-                <MenuItem Header="Person..."      Click="NewPerson_Click" />
-                <MenuItem Header="Company..."     Click="NewCompany_Click" />
-                <MenuItem Header="Situation..."   Click="NewSituation_Click" />
-                <MenuItem Header="Correspondence..." Click="NewInteraction_Click" />
+                <MenuItem Header="Person..." Click="NewPerson_Click"/>
+                <MenuItem Header="Company..." Click="NewCompany_Click"/>
+                <MenuItem Header="Situation..." Click="NewSituation_Click"/>
+                <MenuItem Header="Correspondence..." Click="NewInteraction_Click"/>
+                <MenuItem Header="Objective..." Click="NewObjective_Click"/>
+                <!-- Explicitly added -->
             </MenuItem>
         </Menu>
 
         <!-- Main content as a TabControl -->
-        <TabControl x:Name="MainTabControl">
+        <TabControl x:Name="MainTabControl" Margin="10">
             <TabItem Header="Contacts">
-                <views:PeopleManager x:Name="PeopleManagerView" />
+                <views:PeopleManager x:Name="PeopleManagerView"/>
             </TabItem>
             <TabItem Header="Situations">
-                <views:SituationManager x:Name="SituationManagerView" />
+                <views:SituationManager x:Name="SituationManagerView"/>
             </TabItem>
             <TabItem Header="Companies">
-                <views:CompanyManager x:Name="CompanyManagerView" />
+                <views:CompanyManager x:Name="CompanyManagerView"/>
+            </TabItem>
+            <TabItem Header="Objectives">
+                <views:ObjectiveManager x:Name="ObjectiveManagerView"/>
             </TabItem>
         </TabControl>
+
     </DockPanel>
 </Window>
