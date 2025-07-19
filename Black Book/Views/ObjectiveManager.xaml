@@ -10,7 +10,8 @@
 
     <Grid Margin="10">
         <ListView x:Name="ObjectivesList"
-                  ItemsSource="{Binding Objectives}">
+                  ItemsSource="{Binding Objectives}"
+                  MouseDoubleClick="ObjectivesList_MouseDoubleClick">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="4">
