@@ -1,6 +1,8 @@
-﻿// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
-// 2025-07-01 [Tuesday]
-// [BlackBook/Views/About.xaml.cs]
+﻿///////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Secure Profile Manager
 
 using System.Diagnostics;
 using System.Windows;

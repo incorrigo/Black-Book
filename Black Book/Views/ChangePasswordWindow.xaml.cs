@@ -1,4 +1,10 @@
-﻿// ChangePasswordWindow.xaml.cs
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Password Management Implementation
+
+
 using System;
 using System.IO;
 using System.Linq;
@@ -46,6 +52,7 @@ public partial class ChangePasswordWindow : Window {
     private async void Change_Click (object sender, RoutedEventArgs e) {
         string currentPw = CurrentPasswordBox.Password;
         string newPw = NewPasswordBox.Password;
+
         if (string.IsNullOrWhiteSpace(currentPw) || string.IsNullOrWhiteSpace(newPw)) {
             MessageBox.Show("You need to enter all the details", "Change Password",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -61,17 +68,32 @@ public partial class ChangePasswordWindow : Window {
                             MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
+
         try {
             string user = SessionManager.CurrentUserName;
-            string rootPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users");
-            // Re-encrypt key bundle with new password
-            byte[] oldKey = Crypto.DeriveAeadKey(user, currentPw);
+            string rootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users");
             string bundlePath = Path.Combine(rootPath, user, "file.file");
+
+            // Read existing salt (64 bytes explicitly)
             byte[] bundleBlob = await File.ReadAllBytesAsync(bundlePath);
-            byte[] bundlePlain = Crypto.AeadDecrypt(bundleBlob, oldKey);
-            byte[] newKey = Crypto.DeriveAeadKey(user, newPw);
+            byte[] salt = bundleBlob[..64];
+            byte[] encryptedBundle = bundleBlob[64..];
+
+            // Explicitly extract 32-byte keys for ChaCha20-Poly1305
+            byte[] oldFullKey = Crypto.DeriveAeadKey(user, currentPw, salt);
+            byte[] oldKey = oldFullKey.Take(32).ToArray();
+            byte[] bundlePlain = Crypto.AeadDecrypt(encryptedBundle, oldKey);
+
+            // Generate new salt explicitly for the new password
+            byte[] newSalt = Crypto.GenerateSalt();
+            byte[] newFullKey = Crypto.DeriveAeadKey(user, newPw, newSalt);
+            byte[] newKey = newFullKey.Take(32).ToArray();
             byte[] newWrapped = Crypto.AeadEncrypt(bundlePlain, newKey);
-            await File.WriteAllBytesAsync(bundlePath, newWrapped);
+
+            // Store new salt explicitly alongside new encrypted bundle
+            byte[] finalBlob = newSalt.Concat(newWrapped).ToArray();
+            await File.WriteAllBytesAsync(bundlePath, finalBlob);
+
             SessionManager.CurrentPassword = newPw;
         }
         catch (Exception ex) {
@@ -79,11 +101,13 @@ public partial class ChangePasswordWindow : Window {
                             MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
+
         MessageBox.Show("Your password has now been changed", "Black Book",
                         MessageBoxButton.OK, MessageBoxImage.Information);
         DialogResult = true;
         Close();
     }
+
 
     private void Cancel_Click (object sender, RoutedEventArgs e) {
         this.Close();

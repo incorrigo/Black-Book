@@ -1,5 +1,9 @@
-﻿/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
-// Forensic Profile Deletion
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Forensic Irretrievable Filesystem Management
+
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -44,7 +48,7 @@ public static class ForensicProfileDeletion {
             if (!File.Exists(filePath))
                 continue;
 
-            // Every iteration of the random binary matrix distorts the size of the file
+            // Every iteration of the random binary matrix distorts the actual size of the former file
             long originalLength = new FileInfo(filePath).Length;
 
             // Save every iteration of corruption to disk

@@ -4,6 +4,13 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
+
+/////
+/// This class creates a native placeholder text implementation for WPF controls
+/// so that there is no need to use third party conveniences
+/////
+
+
 namespace BlackBook.Helpers;
 
 public static class PlaceholderHelper {

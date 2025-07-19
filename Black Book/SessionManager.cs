@@ -1,4 +1,10 @@
-﻿using BlackBook.Security;
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Sessions At the Core of What We Do
+
+using BlackBook.Security;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;

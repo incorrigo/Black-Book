@@ -1,4 +1,9 @@
-﻿// Models/Company.cs
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Business & Organisation Technology
+
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

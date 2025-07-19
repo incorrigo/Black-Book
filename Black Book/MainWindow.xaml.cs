@@ -1,4 +1,9 @@
-﻿// MainWindow.xaml.cs
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Main Application Window
+
 using BlackBook.Models;
 using BlackBook.Converters;
 using System.IO;
@@ -64,14 +69,16 @@ public partial class MainWindow : Window {
             progressWindow.Close();
 
             MessageBox.Show(
-                "When a profile is deleted Black Book must be restarted\r\nYour profile has been deleted. Have a nice day!",
+                "When a profile is deleted, Black Book needs to restart !\r\n\r\n" +
+                "Your profile has been deleted once and for all",
                 "Forensic Delete", MessageBoxButton.OK, MessageBoxImage.Information);
 
             Application.Current.Shutdown();
         }
         catch (Exception ex) {
             progressWindow.Close();
-            MessageBox.Show($"Profile deletion failed:\n{ex.Message}",
+            MessageBox.Show($"Delete profile exception:\r\n" +
+                $"\r\n{ex.Message}",
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }

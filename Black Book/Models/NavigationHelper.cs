@@ -1,4 +1,9 @@
-﻿// Models/NavigationHelper.cs
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Multiple Manager Management Manufacturing
+
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json.Serialization;   // ← add

@@ -1,4 +1,10 @@
-﻿using System;
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Correspondence Empowerment
+
+using System;
 
 namespace BlackBook.Models;
 

@@ -1,4 +1,10 @@
-﻿using System;
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Situation Management Solutions
+
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -14,13 +20,15 @@ public partial class Situation {
 }
 
 public enum SituationStatus {
-    New,        // These status settings
-    Ongoing,    // are ordered to make
-    AdHoc,      // the colour grouping
-    DoneWith    // in situation manager
+    New,        // This just in ...
+    Ongoing,    // still going on
+    AdHoc,      // just a defacto situation
+    DoneWith    //,F.R.O. (fuck right off)
+                //`--> consigned to history 
 }
 
-// This is for the "correspondence doesn't update correspondence list" problem
+// When a situation develops (new correspondence) this will update history lists
+// everywhere without you reloading them
 public partial class Situation : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged ([CallerMemberName] string? name = null) =>

@@ -1,5 +1,9 @@
-﻿/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
-// Secure Exceptions - Exceptions for secure operations in Black Book
+﻿/////
+/// INCORRIGO SYX DIGITAL COMMUNICATION SYSTEMS
+/// h t t p s : / / i n c o r r i g o . i o /
+////
+/// Exceptional Exceptions Excellence
+
 using System;
 
 namespace BlackBook.Security;
