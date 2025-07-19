@@ -64,17 +64,30 @@
                 <ComboBoxItem Content="Mutual"/>
             </ComboBox>
 
-            <ComboBox x:Name="InteractionTypeComboBox" Width="130"
-			  SelectedIndex="1" HorizontalAlignment="Center" HorizontalContentAlignment="Center">
-                <ComboBoxItem Content="Email"/>
-                <ComboBoxItem Content="Phone Call"/>
-                <ComboBoxItem Content="Text Message"/>
-                <ComboBoxItem Content="In‑Person Meeting"/>
-                <ComboBoxItem Content="Video Conference"/>
-                <ComboBoxItem Content="Postal Mail"/>
-                <ComboBoxItem Content="Social Media"/>
-                <ComboBoxItem Content="Other"/>
+            <ComboBox x:Name="InteractionTypeComboBox" Width="160"
+          SelectedIndex="1"
+          HorizontalAlignment="Center"
+          HorizontalContentAlignment="Left">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Margin="0,0,6,0"
+                         Fill="{Binding Converter={StaticResource InteractionTypeBrushConverter}}"/>
+                            <TextBlock Text="{Binding Converter={StaticResource InteractionTypeFriendlyConverter}}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
+                <models:InteractionType>Email</models:InteractionType>
+                <models:InteractionType>PhoneCall</models:InteractionType>
+                <models:InteractionType>TextMessage</models:InteractionType>
+                <models:InteractionType>InPersonMeeting</models:InteractionType>
+                <models:InteractionType>VideoConference</models:InteractionType>
+                <models:InteractionType>PostalMail</models:InteractionType>
+                <models:InteractionType>SocialMedia</models:InteractionType>
+                <models:InteractionType>Other</models:InteractionType>
             </ComboBox>
+
         </StackPanel>
 
         <!-- situation -->

@@ -31,7 +31,9 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Title:" Grid.Row="0" Grid.Column="0" Margin="0 4 0 0" VerticalAlignment="Center"/>
-        <TextBox x:Name="TitleBox" Grid.Row="0" Grid.Column="1" Margin="0 2 0 4"/>
+        <TextBox x:Name="TitleBox" Grid.Row="0" Grid.Column="1" Margin="0,2,0,4"
+         MaxLength="37"/>
+
 
         <TextBlock Text="Status:" Grid.Row="1" Grid.Column="0" Margin="0 4 0 0" VerticalAlignment="Center"/>
         <ComboBox x:Name="StatusBox" Grid.Row="1" Grid.Column="1" Margin="0 2 0 4"

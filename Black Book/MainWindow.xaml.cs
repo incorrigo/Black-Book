@@ -12,10 +12,10 @@ public partial class MainWindow : Window {
         InitializeComponent();
         DataContext = SessionManager.Data;
 
-        // Design size is minimum size
+        // Set fixed minimum size as depicted in your screenshot
         this.Loaded += (sender, e) => {
-            this.MinWidth = this.ActualWidth;
-            this.MinHeight = this.ActualHeight;
+            this.MinWidth = 950;
+            this.MinHeight = 600;
         };
     }
 

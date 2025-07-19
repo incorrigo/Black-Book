@@ -11,17 +11,19 @@ using System.Windows.Media;
 namespace BlackBook.Views {
     public partial class CertificateSetupWindow : Window {
         private bool passwordsMatch = false;
+        private readonly Action? _onProfileCreated;
 
-        public CertificateSetupWindow () {
+        public CertificateSetupWindow (Action? onProfileCreated = null) {
             InitializeComponent();
-            // Initially disable Create until inputs are valid
             CreateButton.IsEnabled = false;
+            _onProfileCreated = onProfileCreated;
         }
 
         private async void CreateKey_Click (object sender, RoutedEventArgs e) {
             var name = UserNameBox.Text.Trim();
             var password = PasswordBox.Password;
             var confirm = ConfirmPasswordBox.Password;
+
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password)) {
                 MessageBox.Show("Name and password cannot be empty.", "Incomplete",
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -33,7 +35,6 @@ namespace BlackBook.Views {
                 return;
             }
 
-            // Attempt to create the new profile with encryption
             try {
                 await SecureProfileManager.CreateProfileAsync(
                     userName: name,
@@ -51,8 +52,14 @@ namespace BlackBook.Views {
 
             MessageBox.Show("Profile created successfully.", "Success",
                             MessageBoxButton.OK, MessageBoxImage.Information);
-            this.Close();
+
+            // Explicitly invoke callback to reload profiles after creation
+            _onProfileCreated?.Invoke();
+
+            DialogResult = true;
+            Close();
         }
+
 
         private void Cancel_Click (object sender, RoutedEventArgs e) {
             this.Close();

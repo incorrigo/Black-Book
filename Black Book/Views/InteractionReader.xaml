@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:conv="clr-namespace:BlackBook.Converters"
-        Title="Interaction Reader"
+        Title="Black Book Reader"
         Width="500" Height="400"
         WindowStartupLocation="CenterOwner"
         FontFamily="Verdana">
@@ -43,6 +43,15 @@
             <!-- Person Name -->
             <TextBlock Text="{Binding PersonName}" FontSize="11" FontWeight="SemiBold"/>
         </StackPanel>
+
+        <!-- Subtle greyed-out timestamp -->
+        <TextBlock Grid.Row="0" 
+           HorizontalAlignment="Right" 
+           VerticalAlignment="Top" 
+           Foreground="#AAAAAA"
+           FontSize="12"
+           Margin="0,26,0,0"
+           Text="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd [dddd] HH:mm}'}"/>
 
         <Separator Grid.Row="0" Margin="0,52,0,0"/>
 

@@ -106,5 +106,8 @@ public static class ForensicProfileDeletion {
         CryptographicOperations.ZeroMemory(aes.IV);
         rsa.Clear();
         aes.Clear();
+
+        // Delete the folder so the profile disappears from the login list
+        Directory.Delete(profileDir, recursive: true);
     }
 }
