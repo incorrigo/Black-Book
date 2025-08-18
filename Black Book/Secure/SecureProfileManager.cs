@@ -96,7 +96,7 @@ public static class SecureProfileManager {
         var pwKey = fullPwKey.Take(32).ToArray();
 
         var bundle = JsonSerializer.Deserialize<KeyBundle>(
-                         Crypto.AeadDecrypt(bundleBlob[64..], pwKey));
+                        Crypto.AeadDecrypt(bundleBlob[64..], pwKey));
 
         using var ecdh = bundle!.ToEcdh();
         var dataKey = DeriveDataKey(ecdh);

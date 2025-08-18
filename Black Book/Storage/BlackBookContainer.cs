@@ -21,6 +21,6 @@ public class BlackBookContainer {
         Companies.Clear();
         Interactions.Clear();
         Situations.Clear();
-        Objectives.Clear();   // Explicitly clear objectives too
+        Objectives.Clear();
     }
 }
