@@ -16,14 +16,24 @@
 		Background="{DynamicResource SurfaceBrush}"
 		Foreground="{DynamicResource TextBrush}">
     <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="TitleBlock" FontWeight="Bold" FontSize="16" Margin="0,0,0,8" TextWrapping="Wrap"/>
-        <StackPanel Grid.Row="1">
+        <Image x:Name="IconImage"
+			Grid.RowSpan="2"
+			Width="48"
+			Height="48"
+			Margin="0,0,12,0"/>
+
+        <TextBlock x:Name="TitleBlock" Grid.Column="1" FontWeight="Bold" FontSize="16" Margin="0,0,0,8" TextWrapping="Wrap"/>
+        <StackPanel Grid.Row="1" Grid.Column="1">
             <TextBlock x:Name="MessageBlock" TextWrapping="Wrap" Width="520"/>
             <Expander x:Name="DetailsExpander" Header="Details" Margin="0,8,0,0" IsExpanded="False" Visibility="Collapsed">
                 <Grid>
@@ -32,18 +42,18 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBox x:Name="DetailsBox"
-							 Grid.Row="0"
-							 IsReadOnly="True"
-							 AcceptsReturn="True"
-							 TextWrapping="Wrap"
-							 VerticalScrollBarVisibility="Auto"
-							 MinHeight="120"/>
+						Grid.Row="0"
+						IsReadOnly="True"
+						AcceptsReturn="True"
+						TextWrapping="Wrap"
+						VerticalScrollBarVisibility="Auto"
+						MinHeight="120"/>
                     <Button Grid.Row="1" Content="Copy to Clipboard" HorizontalAlignment="Right" Width="160" Click="Copy_Click"/>
                 </Grid>
             </Expander>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
             <Button Content="OK" Width="88" IsDefault="True" IsCancel="True"/>
         </StackPanel>
     </Grid>

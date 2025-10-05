@@ -15,7 +15,7 @@
 		Title="Working…"
 		Background="{DynamicResource SurfaceBrush}"
 		Foreground="{DynamicResource TextBrush}">
-    <StackPanel Margin="16" Width="480">
+    <StackPanel Margin="16" Width="520">
         <TextBlock x:Name="TitleBlock" FontWeight="Bold" FontSize="16" TextWrapping="Wrap"/>
         <TextBlock x:Name="MessageBlock" Margin="0,6,0,10" TextWrapping="Wrap"/>
         <ProgressBar x:Name="Bar" Height="16" Minimum="0" Maximum="100" Value="0"/>
