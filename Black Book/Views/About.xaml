@@ -107,7 +107,7 @@
         <TextBlock Grid.Row="8"
                    TextAlignment="Center"
                    Margin="0,2,0,12">
-            <Hyperlink NavigateUri="ircs://irc.incorrigo.io/" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink NavigateUri="https://incorrigo.io?ch=incorrigo" RequestNavigate="Hyperlink_RequestNavigate">
                 irc.incorrigo.io
             </Hyperlink>
         </TextBlock>
