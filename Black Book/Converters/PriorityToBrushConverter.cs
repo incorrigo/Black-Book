@@ -9,7 +9,7 @@ namespace BlackBook.Converters;
 public class PriorityToBrushConverter : IValueConverter {
     public object Convert (object value, Type targetType, object parameter, CultureInfo culture) =>
         (Objective.Priority)value switch {
-            Objective.Priority.Easy => Brushes.LightGray,
+            Objective.Priority.Easy => Brushes.LightGreen,
             Objective.Priority.Medium => Brushes.Green,
             Objective.Priority.Important => Brushes.Orange,
             Objective.Priority.Emergency => Brushes.Red,

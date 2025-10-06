@@ -47,7 +47,7 @@
                   ItemsSource="{Binding People}" DisplayMemberPath="Name"/>
 
         <TextBlock Grid.Row="3" Text="Importance:"/>
-        <ComboBox x:Name="ImportanceComboBox" Grid.Row="3" Margin="0,20,0,8" SelectedIndex="0">
+        <ComboBox x:Name="ImportanceComboBox" Grid.Row="3" Margin="0,20,0,8" SelectedIndex="0" SelectionChanged="ImportanceComboBox_SelectionChanged">
             <ComboBoxItem Content="Easy"/>
             <ComboBoxItem Content="Medium"/>
             <ComboBoxItem Content="Important"/>
@@ -59,7 +59,7 @@
         </ComboBox>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center">
-            <CheckBox x:Name="WaitingCheckBox" Content="Waiting?" VerticalAlignment="Center"/>
+            <CheckBox x:Name="WaitingCheckBox" Content="Waiting?" VerticalAlignment="Center" Checked="WaitingCheckBox_Checked"/>
             <TextBox x:Name="ReasonBox" Width="475" Margin="12,0,0,0"
                      MaxLength="150"
                      IsEnabled="{Binding IsChecked, ElementName=WaitingCheckBox}"/>

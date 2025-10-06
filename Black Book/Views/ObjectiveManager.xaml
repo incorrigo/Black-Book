@@ -6,28 +6,98 @@
 
     <UserControl.Resources>
         <conv:PriorityToBrushConverter x:Key="PriorityBrushConverter"/>
+        <conv:ObjectiveBackgroundConverter x:Key="ObjectiveBackgroundConverter"/>
+        <conv:ObjectiveStatusConverter x:Key="ObjectiveStatusConverter"/>
+        <conv:IdWithStatusSuffixConverter x:Key="IdWithStatusSuffixConverter"/>
     </UserControl.Resources>
 
     <Grid Margin="10">
         <ListView x:Name="ObjectivesList"
                   ItemsSource="{Binding Objectives}"
                   MouseDoubleClick="ObjectivesList_MouseDoubleClick">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{Binding Converter={StaticResource ObjectiveBackgroundConverter}}"/>
+                    <Style.Triggers>
+                        <!-- Keep colors stable ONLY for shaded items (non-Normal statuses) -->
+                        <!-- Overdue: prevent hover/selection from changing colors -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Converter={StaticResource ObjectiveStatusConverter}}" Value="{x:Static conv:ObjectiveStatus.Overdue}"/>
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{Binding Converter={StaticResource ObjectiveBackgroundConverter}}"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Converter={StaticResource ObjectiveStatusConverter}}" Value="{x:Static conv:ObjectiveStatus.Overdue}"/>
+                                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{Binding Converter={StaticResource ObjectiveBackgroundConverter}}"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </MultiDataTrigger>
+
+                        <!-- Follow-up expired: prevent hover/selection color shifts -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Converter={StaticResource ObjectiveStatusConverter}}" Value="{x:Static conv:ObjectiveStatus.FollowUpExpired}"/>
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{Binding Converter={StaticResource ObjectiveBackgroundConverter}}"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Converter={StaticResource ObjectiveStatusConverter}}" Value="{x:Static conv:ObjectiveStatus.FollowUpExpired}"/>
+                                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{Binding Converter={StaticResource ObjectiveBackgroundConverter}}"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </MultiDataTrigger>
+
+                        <!-- Cancelled: prevent hover/selection color shifts -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Converter={StaticResource ObjectiveStatusConverter}}" Value="{x:Static conv:ObjectiveStatus.Cancelled}"/>
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{Binding Converter={StaticResource ObjectiveBackgroundConverter}}"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Converter={StaticResource ObjectiveStatusConverter}}" Value="{x:Static conv:ObjectiveStatus.Cancelled}"/>
+                                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{Binding Converter={StaticResource ObjectiveBackgroundConverter}}"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="4">
                         <!-- Objective Title -->
-                        <TextBlock FontWeight="Bold" FontSize="14"
+                        <TextBlock x:Name="TitleText" FontWeight="Bold" FontSize="14"
                                    Text="{Binding Title}" />
 
-                        <!-- GUID (greyed-out) -->
-                        <TextBlock FontSize="10" Foreground="#888888"
-                                   Text="{Binding Id}" Margin="0,2,0,4"/>
+                        <!-- GUID with optional status suffix (default greyed-out) -->
+                        <TextBlock x:Name="GuidText" FontSize="10" Foreground="#888888" Margin="0,2,0,4">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource IdWithStatusSuffixConverter}">
+                                    <Binding Path="Id"/>
+                                    <Binding Path="." Converter="{StaticResource ObjectiveStatusConverter}"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
 
                         <!-- Importance Dot, Situation Name, Dates -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse Width="8" Height="8" Margin="0,0,6,0" VerticalAlignment="Center"
+                            <Ellipse x:Name="ImportanceDot" Width="8" Height="8" Margin="0,0,6,0" VerticalAlignment="Center"
                                      Fill="{Binding Importance, Converter={StaticResource PriorityBrushConverter}}"/>
-                            <TextBlock FontWeight="SemiBold" VerticalAlignment="Center"
+                            <TextBlock x:Name="SituationText" FontWeight="SemiBold" VerticalAlignment="Center"
                                        Text="{Binding SituationId, Converter={StaticResource SituationIdToNameConverter}}"/>
                             <TextBlock VerticalAlignment="Center" Margin="12,0,0,0"
                                        Text="{Binding Created, StringFormat='{}{0:yyyy-MM-dd}'}"/>
@@ -36,6 +106,24 @@
                                        Text="{Binding DueDate, TargetNullValue='?', StringFormat='{}{0:yyyy-MM-dd}'}"/>
                         </StackPanel>
                     </StackPanel>
+                    
+                    <DataTemplate.Triggers>
+                        <!-- Deadline elapsed (red background case) -->
+                        <DataTrigger Binding="{Binding Converter={StaticResource ObjectiveStatusConverter}}" Value="{x:Static conv:ObjectiveStatus.Overdue}">
+                            <Setter TargetName="ImportanceDot" Property="Fill" Value="Aqua"/>
+                            <Setter TargetName="GuidText" Property="Foreground" Value="Black"/>
+                            <Setter TargetName="TitleText" Property="Foreground" Value="Black"/>
+                            <Setter TargetName="SituationText" Property="Foreground" Value="Black"/>
+                        </DataTrigger>
+
+                        <!-- Follow-up date elapsed (dark orange case) -->
+                        <DataTrigger Binding="{Binding Converter={StaticResource ObjectiveStatusConverter}}" Value="{x:Static conv:ObjectiveStatus.FollowUpExpired}">
+                            <Setter TargetName="ImportanceDot" Property="Fill" Value="Black"/>
+                            <Setter TargetName="GuidText" Property="Foreground" Value="Black"/>
+                            <Setter TargetName="TitleText" Property="Foreground" Value="Black"/>
+                            <Setter TargetName="SituationText" Property="Foreground" Value="Black"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
