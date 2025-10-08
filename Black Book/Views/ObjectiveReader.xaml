@@ -1,0 +1,71 @@
+﻿<Window x:Class="BlackBook.Views.ObjectiveReader"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:BlackBook.Converters"
+        x:Name="ReaderWindow"
+        Title="Black Book Reader"
+        Width="540" Height="430"
+        WindowStartupLocation="CenterOwner"
+        FontFamily="Verdana">
+    
+    <Window.Resources>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0"
+                   Text="{Binding Title}"
+                   FontWeight="Bold"
+                   FontSize="16"/>
+
+        <!-- Meta line: importance dot + situation / person + created date on right -->
+        <Grid Grid.Row="0" Margin="0,26,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0">
+                    <Ellipse.Fill>
+                        <Binding Path="Importance">
+                            <Binding.Converter>
+                                <StaticResource ResourceKey="PriorityToBrushConverter"/>
+                            </Binding.Converter>
+                        </Binding>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock Text="{Binding SituationId, Converter={StaticResource SituationIdToNameConverter}}" 
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="  involving  " FontStyle="Italic" Foreground="#666" Margin="8,0,0,0"
+                           Visibility="{Binding PersonId, Converter={StaticResource NullToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding PersonId, Converter={StaticResource PersonNameConverter}}"
+                           Visibility="{Binding PersonId, Converter={StaticResource NullToVisibilityConverter}}"/>
+            </StackPanel>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#AAAAAA" FontSize="12"
+                       Text="{Binding Created, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+        </Grid>
+
+        <Separator Grid.Row="0" Margin="0,52,0,0"/>
+
+        <!-- Description -->
+        <TextBox Grid.Row="1" Margin="0,8" Text="{Binding Description, Mode=OneWay}" TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"/>
+
+        <!-- Bottom bar -->
+        <DockPanel Grid.Row="2" Margin="0,8,0,0">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock FontSize="12" Foreground="#444" Text="{Binding DeadlineLine}"/>
+                <TextBlock FontSize="12" Foreground="#444" Text="{Binding ExistedLine}"/>
+                <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Id, StringFormat=' {0}'}"/>
+            </StackPanel>
+            <Button DockPanel.Dock="Right" Content="Close" Width="80" HorizontalAlignment="Right" Click="Close_Click" Padding="8,4"/>
+        </DockPanel>
+    </Grid>
+</Window>

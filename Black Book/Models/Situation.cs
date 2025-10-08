@@ -17,6 +17,16 @@ public partial class Situation {
     public SituationStatus Status { get; set; } = SituationStatus.AdHoc;
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public DateTime? Closed { get; set; }
+
+    // Used for custom sorting of situations in the desired order
+    // new -> ongoing -> ad hoc -> done with
+    public int StatusOrder => Status switch {
+        SituationStatus.New => 0,
+        SituationStatus.Ongoing => 1,
+        SituationStatus.AdHoc => 2,
+        SituationStatus.DoneWith => 3,
+        _ => 99
+    };
 }
 
 public enum SituationStatus {
@@ -38,5 +48,11 @@ public partial class Situation : INotifyPropertyChanged {
     public void NotifyListsChanged () {
         OnPropertyChanged(nameof(Interactions));
         OnPropertyChanged(nameof(People));         // both depend on Interactions
+    }
+
+    private bool _isArchived = false;
+    public bool IsArchived {
+        get => _isArchived;
+        set { _isArchived = value; OnPropertyChanged(); }
     }
 }

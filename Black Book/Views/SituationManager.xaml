@@ -15,7 +15,8 @@
                 <PropertyGroupDescription PropertyName="Status" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
-                <scm:SortDescription PropertyName="Status" Direction="Ascending"/>
+                <!-- Sort by a custom numeric key to enforce desired status order -->
+                <scm:SortDescription PropertyName="StatusOrder" Direction="Ascending"/>
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
     </UserControl.Resources>
@@ -47,6 +48,7 @@
                 <ContextMenu>
                     <MenuItem Header="Edit Situation" Click="EditSituation_Click"/>
                     <MenuItem Header="Delete Situation" Click="DeleteSituation_Click"/>
+                    <MenuItem Header="Archive this situation" Click="ArchiveSituation_Click"/>
                     <Separator/>
                     <MenuItem Header="Add Correspondence…" Click="AddCorrespondence_Click"/>
                 </ContextMenu>
@@ -140,6 +142,8 @@
                 <DockPanel Grid.Row="2">
                     <TextBlock FontSize="11" Foreground="Gray" DockPanel.Dock="Left" VerticalAlignment="Center"
                                Text="{Binding SelectedItem.Id, ElementName=SituationsList, StringFormat='View: {0}'}" />
+                    <Button Content="Archived Situations" Width="140" DockPanel.Dock="Right" Margin="8,0,0,0"
+                            HorizontalAlignment="Right" Click="OpenSituationArchive_Click"/>
                     <Button x:Name="ReplyButton" Content="Bounce FAO" Width="120" DockPanel.Dock="Right"
                             HorizontalAlignment="Right" Click="ReplyToSelected_Click"/>
                 </DockPanel>

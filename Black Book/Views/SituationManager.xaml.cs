@@ -17,6 +17,16 @@ public partial class SituationManager : UserControl {
     public SituationManager () {
         InitializeComponent();
         DataContext = SessionManager.Data;
+
+        // Filter out archived situations from the grouped view
+        var cvs = (CollectionViewSource)Resources["GroupedSituations"];
+        cvs.Filter += GroupedSituations_Filter;
+    }
+
+    private void GroupedSituations_Filter(object sender, FilterEventArgs e) {
+        if (e.Item is Situation s) {
+            e.Accepted = !s.IsArchived;
+        }
     }
 
     public void SelectSituation (Situation situation) {
@@ -163,6 +173,29 @@ public partial class SituationManager : UserControl {
             window.PrefillForReply(interaction);
             window.ShowDialog();
         }
+    }
+
+    private async void ArchiveSituation_Click(object sender, RoutedEventArgs e) {
+        if (SituationsList.SelectedItem is Situation situation) {
+            situation.IsArchived = true;
+            try {
+                await SecureProfileManager.SaveProfileAsync(SessionManager.CurrentUserName, SessionManager.CurrentPassword,
+                                                            SessionManager.Data!,
+                                                            System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users"),
+                                                            System.Threading.CancellationToken.None);
+            }
+            catch (System.Exception ex) {
+                MessageBox.Show($"Failed to save data:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            RefreshGrouping();
+        }
+    }
+
+    private void OpenSituationArchive_Click(object sender, RoutedEventArgs e) {
+        var dlg = new ArchiveDialog(ArchiveDialog.ArchiveKind.Situations) { Owner = Window.GetWindow(this) };
+        dlg.ShowDialog();
+        RefreshGrouping();
     }
 
     private void PeopleListInSituation_MouseDoubleClick (object sender, MouseButtonEventArgs e) {

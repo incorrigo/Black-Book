@@ -2,6 +2,8 @@
 <Window x:Class="BlackBook.Views.ObjectiveEntryWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:models="clr-namespace:BlackBook.Models"
         Title="Objective Entry"
         Height="540" Width="600"
         ResizeMode="NoResize"
@@ -12,6 +14,12 @@
             <Setter Property="Language" Value="en-CA"/>
             <Setter Property="SelectedDateFormat" Value="Short"/>
         </Style>
+        <!-- Enum values for Objective.Priority -->
+        <ObjectDataProvider x:Key="PriorityValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="models:Objective+Priority"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Window.Resources>
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -47,15 +55,19 @@
                   ItemsSource="{Binding People}" DisplayMemberPath="Name"/>
 
         <TextBlock Grid.Row="3" Text="Importance:"/>
-        <ComboBox x:Name="ImportanceComboBox" Grid.Row="3" Margin="0,20,0,8" SelectedIndex="0" SelectionChanged="ImportanceComboBox_SelectionChanged">
-            <ComboBoxItem Content="Easy"/>
-            <ComboBoxItem Content="Medium"/>
-            <ComboBoxItem Content="Important"/>
-            <ComboBoxItem Content="Emergency"/>
-            <ComboBoxItem Content="Waiting"/>
-            <ComboBoxItem Content="Delegated"/>
-            <ComboBoxItem Content="Cancelled"/>
-            <ComboBoxItem Content="Done"/>
+        <ComboBox x:Name="ImportanceComboBox" Grid.Row="3" Margin="0,20,0,8"
+                  SelectedIndex="0"
+                  ItemsSource="{Binding Source={StaticResource PriorityValues}}"
+                  SelectionChanged="ImportanceComboBox_SelectionChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="8" Height="8" Margin="0,0,6,0"
+                                 Fill="{Binding Converter={StaticResource PriorityToBrushConverter}}"/>
+                        <TextBlock Text="{Binding}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
         </ComboBox>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center">

@@ -27,6 +27,12 @@ public class Objective : INotifyPropertyChanged {
         set { _completed = value; OnPropertyChanged(); }
     }
 
+    private bool _isArchived = false;
+    public bool IsArchived {
+        get => _isArchived;
+        set { _isArchived = value; OnPropertyChanged(); }
+    }
+
     private string _title = string.Empty;
     public string Title {
         get => _title;
