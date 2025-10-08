@@ -76,7 +76,7 @@
                    Margin="0,2,0,0"/>
 
         <TextBlock Grid.Row="4"
-                   Text="Version 0.1.0 - 2025-07-01"
+                   Text="Version 1.0.0 - 2025-07-01"
                    Foreground="#555555"
                    FontSize="12"
                    TextAlignment="Center"
